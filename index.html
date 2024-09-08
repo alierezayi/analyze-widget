@@ -3,12 +3,520 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analyze Widget</title>
+
+    <!-- Include jQuery from CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Include Chart.js from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include DataTables CSS from CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"
+    />
+    <!-- Include DataTables JS from CDN -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <!-- Include Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Analyze Page</title>
+    <!-- Includes Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
   </head>
-  <body>
-    <div class="container mx-auto">
-      <h1 class="text-3xl font-bold text-blue-500">Hello world!</h1>
+  <body class="">
+    <!-- Tabs -->
+    <div class="border-b border-gray-200 px-3">
+      <ul
+        class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400 py-2"
+        id="tabs"
+      >
+        <li class="me-2">
+          <button
+            class="tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 rounded-t-lg group"
+            id="analyze-tab"
+          >
+            <i data-lucide="chart-spline" class="w-4 h-4"></i>
+            Analyze
+          </button>
+        </li>
+        <li class="me-2">
+          <button
+            class="tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 rounded-t-lg group"
+            id="history-tab"
+          >
+            <i data-lucide="history" class="w-4 h-4"></i>
+            History Positions
+          </button>
+        </li>
+      </ul>
     </div>
+    <!-- End Tabs -->
+
+    <!-- Analyze Tab Content -->
+    <div
+      id="analyze"
+      class="tab-content hidden p-3 grid grid-cols-4 gap-x-3 gap-y-7"
+    >
+      <!-- Summary Stats -->
+      <div class="summary-card rounded-xl border p-5 col-span-4">
+        <div
+          class="summary-card-content grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-x-3 gap-y-10 col-span-4"
+        >
+          <!-- Stat cards will be appended here -->
+        </div>
+      </div>
+      <!-- End Summary Stats -->
+
+      <!-- Summary Chart -->
+      <div class="rounded-2xl border p-6 col-span-2">
+        <div class="text-lg font-semibold mb-4">Financial Overview</div>
+        <div class="w-full max-h-[300px]">
+          <canvas id="summaryChart" width="100%"></canvas>
+        </div>
+      </div>
+      <!-- End Summary Chart -->
+
+      <!-- Prop Analyze -->
+      <div class="rounded-2xl col-span-2">
+        <!-- <h2 class="text-lg font-semibold mb-6">Prop Analyze</h2> -->
+        <div class="grid lg:grid-cols-2 gap-3" id="prop-analyze-content">
+          <!-- Render Prop Analyze Items -->
+        </div>
+      </div>
+      <!-- End Prop Analyze -->
+    </div>
+    <!-- End Analyze Tab Content -->
+
+    <!-- History Tabs Content -->
+    <div id="history" class="tab-content hidden">
+      <h2 class="text-center mt-8">Sales Records</h2>
+      <div style="width: 70%; margin: auto">
+        <table id="salesTable" class="display">
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Sales</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>January</td>
+              <td>120</td>
+            </tr>
+            <tr>
+              <td>February</td>
+              <td>150</td>
+            </tr>
+            <tr>
+              <td>March</td>
+              <td>180</td>
+            </tr>
+            <tr>
+              <td>April</td>
+              <td>220</td>
+            </tr>
+            <tr>
+              <td>May</td>
+              <td>260</td>
+            </tr>
+            <tr>
+              <td>June</td>
+              <td>300</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- End History Tabs Content -->
+
+    <script>
+      lucide.createIcons();
+
+      // Summary Stats Functionality
+      function formatValue(value) {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(value);
+      }
+
+      function createSumStatCard(title, value, iconName) {
+        var trendIcon =
+          value >= 0
+            ? '<i data-lucide="trending-up" class="text-green-500 w-4 h-4"></i>'
+            : '<i data-lucide="trending-down" class="text-red-500 w-4 h-4"></i>';
+
+        return `
+          <div>
+            <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
+              <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
+              <div class="text-sm font-medium">${title}</div>
+            </div>
+            <div>
+              <div class="text-xl font-semibold">${formatValue(value)}</div>
+              <p class="text-xs text-muted-foreground flex gap-1">
+                ${trendIcon} ${Math.abs(value).toFixed(2)}
+              </p>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSumStats(data) {
+        var statsContainer = $(".summary-card-content");
+        statsContainer.empty();
+
+        statsContainer.append(
+          createSumStatCard("Profit", data.sumProfit, "dollar-sign")
+        );
+        statsContainer.append(
+          createSumStatCard("Commission", data.sumCommission, "scale")
+        );
+        statsContainer.append(
+          createSumStatCard("Net Profit", data.sumNetProfit, "dollar-sign")
+        );
+        statsContainer.append(
+          createSumStatCard("Swap", data.sumSwap, "arrow-left-right")
+        );
+        statsContainer.append(
+          createSumStatCard("Withdrawals", data.sumWithdrawals, "arrow-up")
+        );
+        statsContainer.append(
+          createSumStatCard("Deposits", data.sumDeposits, "arrow-down")
+        );
+        statsContainer.append(
+          createSumStatCard("Start Balance", data.startBalance, "wallet")
+        );
+        statsContainer.append(
+          createSumStatCard(
+            "Balance Drawdown",
+            data.balanceDrawdown,
+            "arrow-down"
+          )
+        );
+
+        lucide.createIcons();
+      }
+      // End Summary Stats Functionality
+
+      // Summary Charts Functionality
+      const renderSumChart = (data) => {
+        const formatChart = (name, value) => {
+          return {
+            name: name,
+            originalValue: value,
+            value: Math.abs(value).toFixed(2),
+            backgroundColor: value < 0 ? "#f43f5e" : "#3b82f6",
+          };
+        };
+
+        const dataChart = [
+          formatChart("Sum Profit", data.sumProfit),
+          formatChart("Sum Commission", data.sumCommission),
+          formatChart("Sum Deposits", data.sumDeposits),
+          formatChart("Sum Net Profit", data.sumNetProfit),
+          formatChart("Sum Swap", data.sumSwap),
+          formatChart("Sum Withdrawals", data.sumWithdrawals),
+        ];
+
+        const labels = dataChart.map((item) => item.name);
+        const chartData = dataChart.map((item) => parseFloat(item.value));
+        const backgroundColors = dataChart.map((item) => item.backgroundColor);
+
+        const ctx = $("#summaryChart");
+        const myChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Financial Overview",
+                data: chartData,
+                backgroundColor: backgroundColors,
+                borderColor: backgroundColors,
+                borderRadius: 10,
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y", // Set this for horizontal bars
+            scales: {
+              x: {
+                beginAtZero: true,
+                grid: {
+                  offset: false,
+                },
+              },
+              y: {
+                beginAtZero: true,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    return `Value: ${context.raw}`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      };
+      // End Summary Charts Functionality
+
+      // Prop Analyze Functionality
+      const renderPropAnalyze = (data) => {
+        const propData = [
+          {
+            label: "6 Day Trade",
+            value: data.dayTrade,
+            max: 6,
+            icon: "clock",
+            iconColor: "text-blue-400",
+            status: "stable",
+            unit: "Day",
+          },
+          {
+            label: "6 Day Complete Lot",
+            value: data.dayTradeCompleteVolume,
+            max: 6,
+            icon: "trending-up",
+            iconColor: "text-purple-400",
+            status: "passed",
+            unit: "Day",
+          },
+          {
+            label: "3 Min Trade",
+            value: data.tradeLimitTime,
+            max: 3,
+            icon: "activity",
+            iconColor: "text-rose-400",
+            status: "passed",
+            unit: "Trade",
+          },
+          {
+            label: "Relative Drawdown",
+            value: data.relativeDrawdown,
+            max: 3,
+            icon: "percent",
+            iconColor: "text-yellow-400",
+            status: "none",
+            unit: "%",
+          },
+        ];
+
+        propData.forEach((item) => {
+          const statusBadge = getStatusBadge(item.status);
+          const fillColor = getFillColor(item.status);
+          const chartId = `chart-${item.label
+            .replace(/\s+/g, "-")
+            .toLowerCase()}`;
+
+          const html = `
+            <div class="space-y-4 border rounded-2xl p-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
+                  <span class="text-base font-semibold">${item.label}</span>
+                </div>
+                ${statusBadge}
+              </div>
+              <div class="flex items-center space-x-4">
+                <div><canvas id="${chartId}" width="100" height="100"></canvas></div>
+                <div>
+                  <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
+                  <p class="text-sm text-gray-400">Progress</p>
+                </div>
+              </div>
+            </div>
+          `;
+
+          $("#prop-analyze-content").append(html);
+
+          lucide.createIcons();
+
+          renderChart(chartId, item.value, item.max, fillColor);
+        });
+
+        function getStatusBadge(status) {
+          switch (status) {
+            case "passed":
+              return '<span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Passed</span>';
+            case "stable":
+              return '<span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Stable</span>';
+            case "rejected":
+              return '<span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Rejected</span>';
+            default:
+              return '<span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">None</span>';
+          }
+        }
+
+        function getFillColor(status) {
+          switch (status) {
+            case "passed":
+              return "#22c55e";
+            case "stable":
+              return "#3b82f6";
+            case "rejected":
+              return "#f43f5e";
+            default:
+              return "#a855f7";
+          }
+        }
+
+        function renderChart(chartId, value, max, fillColor) {
+          const ctx = document.getElementById(chartId).getContext("2d");
+          const step = 400 / max;
+
+          new Chart(ctx, {
+            type: "doughnut",
+            data: {
+              datasets: [
+                {
+                  data: [value * step, 400 - value * step],
+                  backgroundColor: [fillColor, "#e5e7eb"],
+                  borderWidth: 0,
+                },
+              ],
+            },
+            options: {
+              // circumference: Math.PI,
+              // rotation: -Math.PI,
+              cutout: "70%",
+              responsive: true,
+              maintainAspectRatio: false,
+              animation: {
+                animateRotate: true,
+                animateScale: true,
+              },
+              plugins: {
+                tooltip: { enabled: false },
+              },
+            },
+          });
+        }
+      };
+      // End Prop Analyze Functionality
+
+      $(document).ready(function () {
+        // Tab switching logic
+        const tabElements = [
+          {
+            id: "analyze",
+            triggerEl: $("#analyze-tab"),
+            targetEl: $("#analyze"),
+          },
+          {
+            id: "history",
+            triggerEl: $("#history-tab"),
+            targetEl: $("#history"),
+          },
+        ];
+
+        const tabOptions = {
+          defaultTabId: "analyze",
+          activeClasses:
+            "text-blue-600 hover:text-blue-600 rounded-lg bg-slate-100 border-none",
+          inactiveClasses: "text-gray-500 hover:text-gray-600",
+          onShow: () => {
+            console.log("tab is shown");
+          },
+        };
+
+        function showTab(tabId) {
+          tabElements.forEach((tab) => {
+            if (tab.id === tabId) {
+              tab.triggerEl
+                .addClass(tabOptions.activeClasses)
+                .removeClass(tabOptions.inactiveClasses);
+              tab.targetEl.removeClass("hidden");
+              tabOptions.onShow();
+            } else {
+              tab.triggerEl
+                .removeClass(tabOptions.activeClasses)
+                .addClass(tabOptions.inactiveClasses);
+              tab.targetEl.addClass("hidden");
+            }
+          });
+        }
+
+        showTab(tabOptions.defaultTabId);
+
+        $(".tab-button").on("click", function () {
+          const tabId = $(this).attr("id").split("-")[0];
+          showTab(tabId);
+        });
+        // End Tabs Switching
+
+        // Fetching Analyze Data
+
+        const login = 295847;
+
+        const url = `https://socket.unfxco.com/mt5/api/analyze/basic?login=${login}`;
+
+        $.ajax({
+          url: url,
+          method: "GET",
+          headers: {
+            APIKey:
+              "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20",
+          },
+          success: function (data) {
+            const {
+              user,
+              nowStatus,
+              summary,
+              countTrade,
+              propAnalyze,
+              positions,
+              orders,
+              historyBalance,
+              historyGrowth,
+            } = data;
+            console.log(data);
+
+            console.log();
+            // $("#data-container").text(data);
+          },
+          error: function () {
+            // $("#data-container").text("Failed to load ");
+          },
+        });
+        // End Fetching Analyze Data
+
+        // Display Summary
+        const summary = {
+          sumProfit: -435.86,
+          sumCommission: -205.3,
+          sumSwap: -61.01,
+          sumNetProfit: -702.17,
+          sumDeposits: 0,
+          sumWithdrawals: 0,
+          startBalance: 20000,
+          balanceDrawdown: -5.78,
+        };
+
+        renderSumStats(summary);
+        renderSumChart(summary);
+        // End Display Summary
+
+        // Display Prop Analyze
+        const propAnalyze = {
+          dayTrade: 9,
+          dayTradeCompleteVolume: 2,
+          relativeDrawdown: 1,
+          tradeLimitTime: 0,
+        };
+
+        renderPropAnalyze(propAnalyze);
+
+        // End Display Prop Analyze
+
+        // Initialize DataTables
+        $("#salesTable").DataTable();
+      });
+    </script>
   </body>
 </html>
