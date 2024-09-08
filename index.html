@@ -65,6 +65,23 @@
       </div>
       <!-- End Summary Stats -->
 
+      <!-- Summary Chart -->
+      <div class="rounded-2xl border p-6 col-span-2">
+        <div class="text-lg font-semibold mb-4">Financial Overview</div>
+        <div class="w-full max-h-[300px]">
+          <canvas id="summaryChart" width="100%"></canvas>
+        </div>
+      </div>
+      <!-- End Summary Chart -->
+
+      <!-- Prop Analyze -->
+      <div class="rounded-2xl col-span-2">
+        <!-- <h2 class="text-lg font-semibold mb-6">Prop Analyze</h2> -->
+        <div class="grid lg:grid-cols-2 gap-3" id="prop-analyze-content">
+          <!-- Render Prop Analyze Items -->
+        </div>
+      </div>
+      <!-- End Prop Analyze -->
     </div>
     <!-- End Analyze Tab Content -->
 
@@ -258,7 +275,7 @@
             max: 6,
             icon: "clock",
             iconColor: "text-blue-400",
-            status: "stable",
+            status: data.dayTrade >= 6 ? "passed" : "stable",
             unit: "Day",
           },
           {
@@ -267,7 +284,7 @@
             max: 6,
             icon: "trending-up",
             iconColor: "text-purple-400",
-            status: "passed",
+            status: data.dayTradeCompleteVolume >= 6 ? "passed" : "stable",
             unit: "Day",
           },
           {
@@ -276,7 +293,7 @@
             max: 3,
             icon: "activity",
             iconColor: "text-rose-400",
-            status: "passed",
+            status: data.tradeLimitTime >= 3 ? "rejected" : "passed",
             unit: "Trade",
           },
           {
@@ -351,14 +368,13 @@
 
         function renderChart(chartId, value, max, fillColor) {
           const ctx = document.getElementById(chartId).getContext("2d");
-          const step = 400 / max;
-
+          const step = 100 / max;
           new Chart(ctx, {
             type: "doughnut",
             data: {
               datasets: [
                 {
-                  data: [value * step, 400 - value * step],
+                  data: value <= max ? [value * step, 100 - value * step] : [value],
                   backgroundColor: [fillColor, "#e5e7eb"],
                   borderWidth: 0,
                 },
@@ -487,10 +503,10 @@
 
         // Display Prop Analyze
         const propAnalyze = {
-          dayTrade: 9,
-          dayTradeCompleteVolume: 2,
+          dayTrade: 3,
+          dayTradeCompleteVolume: 7,
           relativeDrawdown: 1,
-          tradeLimitTime: 0,
+          tradeLimitTime: 6,
         };
 
         renderPropAnalyze(propAnalyze);
