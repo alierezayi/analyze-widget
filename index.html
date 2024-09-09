@@ -51,6 +51,7 @@
     <!-- End Tabs -->
 
     <!-- Analyze Tab Content -->
+    <div id="analyze-status"></div>
     <div
       id="analyze"
       class="tab-content hidden p-3 grid grid-cols-4 gap-x-3 gap-y-7"
@@ -66,22 +67,31 @@
       <!-- End Summary Stats -->
 
       <!-- Summary Chart -->
-      <div class="rounded-2xl border p-6 col-span-2">
+      <div class="rounded-2xl border p-6 col-span-4 md:col-span-2">
         <div class="text-lg font-semibold mb-4">Financial Overview</div>
-        <div class="w-full max-h-[300px]">
-          <canvas id="summaryChart" width="100%"></canvas>
+        <div class="w-full h-[260px]">
+          <canvas id="summaryChart"></canvas>
         </div>
       </div>
       <!-- End Summary Chart -->
 
       <!-- Prop Analyze -->
-      <div class="rounded-2xl col-span-2">
+      <div class="rounded-2xl col-span-4 md:col-span-2">
         <!-- <h2 class="text-lg font-semibold mb-6">Prop Analyze</h2> -->
         <div class="grid lg:grid-cols-2 gap-3" id="prop-analyze-content">
           <!-- Render Prop Analyze Items -->
         </div>
       </div>
       <!-- End Prop Analyze -->
+
+      <!-- Max Drawdown Items -->
+      <div
+        id="max-drawdown-content"
+        class="w-full grid lg:grid-cols-2 gap-3 2xl:grid-cols-4 col-span-4"
+      >
+        <!-- Render Max Drawdown -->
+      </div>
+      <!-- End Max Drawdown Items -->
     </div>
     <!-- End Analyze Tab Content -->
 
@@ -89,7 +99,7 @@
     <div id="history" class="tab-content hidden">
       <h2 class="text-center mt-8">Sales Records</h2>
       <div style="width: 70%; margin: auto">
-        <table id="salesTable" class="display">
+        <table id="salesTable" class="display" style="transform: translateX()">
           <thead>
             <tr>
               <th>Month</th>
@@ -129,6 +139,37 @@
 
     <script>
       lucide.createIcons();
+
+      // Fetching Data
+      async function fetchData(url, { statusId, dataId }) {
+        const $dataEl = $(`#${statusId}`);
+        const $statusEl = $(`#${statusId}`);
+
+        $dataEl.addClass("hidden");
+
+        try {
+          $statusEl.text("Loading...");
+
+          // Fetch data
+          const res = await fetch(url, {
+            headers: {
+              APIKey:
+                "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20",
+            },
+          });
+          if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+          }
+
+          $dataEl.removeClass("hidden");
+
+          const data = await res.json();
+          return data;
+        } catch (error) {
+          $statusEl.text(`Error: ${error.message}`).addClass("text-rose-500");
+        }
+      }
+      // End Fetching Data
 
       // Summary Stats Functionality
       function formatValue(value) {
@@ -234,8 +275,8 @@
                 data: chartData,
                 backgroundColor: backgroundColors,
                 borderColor: backgroundColors,
-                borderRadius: 10,
-                borderWidth: 1,
+                borderRadius: 8,
+                // barThickness: 30,
               },
             ],
           },
@@ -245,11 +286,24 @@
               x: {
                 beginAtZero: true,
                 grid: {
-                  offset: false,
+                  display: true,
+                  drawBorder: false,
+                  // color: (context) => {},
+                  borderDash: [3, 5],
+                },
+                ticks: {
+                  padding: 10,
+                  display: true,
                 },
               },
               y: {
-                beginAtZero: true,
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  padding: 15,
+                  display: true,
+                },
               },
             },
             plugins: {
@@ -261,6 +315,8 @@
                 },
               },
             },
+            maintainAspectRatio: false,
+            responsive: true,
           },
         });
       };
@@ -324,7 +380,7 @@
                 ${statusBadge}
               </div>
               <div class="flex items-center space-x-4">
-                <div><canvas id="${chartId}" width="100" height="100"></canvas></div>
+                <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
                 <div>
                   <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
                   <p class="text-sm text-gray-400">Progress</p>
@@ -374,7 +430,8 @@
             data: {
               datasets: [
                 {
-                  data: value <= max ? [value * step, 100 - value * step] : [value],
+                  data:
+                    value <= max ? [value * step, 100 - value * step] : [value],
                   backgroundColor: [fillColor, "#e5e7eb"],
                   borderWidth: 0,
                 },
@@ -398,6 +455,112 @@
         }
       };
       // End Prop Analyze Functionality
+
+      // Max Drawdowm Functionality
+      const renderMaxDrawdown = (data) => {
+        const maxDrawDownData = [
+          {
+            title: "Start",
+            value: data.maxStartBalanceDrawdown * 100,
+            time: data.maxStartBalanceDrawdownTime,
+            max: data.perStartRole,
+          },
+          {
+            title: "EOD",
+            value: data.maxEODBalanceDrawdown * 100,
+            time: data.maxEODBalanceDrawdownTime,
+            max: data.perEODRole,
+          },
+          {
+            title: "MAT",
+            value: data.maxAllTimeBalanceDrawdown * 100,
+            time: data.maxAllTimeBalanceDrawdownTime,
+            max: data.perStartRole,
+          },
+          {
+            title: "MD",
+            value: data.maxDayBalanceDrawdown * 100,
+            time: data.maxDayBalanceDrawdownTime,
+            max: data.perMDRole,
+          },
+        ];
+
+        maxDrawDownData.forEach(({ value, max, time, title }) => {
+          const status = value < max ? "stable" : "rejected";
+
+          const badge = getBadge(status);
+          const progress = getProgress(value, max);
+
+          const html = `
+          <div class="overflow-hidden rounded-2xl border p-4">
+            <div class="flex flex-row justify-between items-center pb-4">
+              <h2 class="text-base font-medium">${title} balance max drawdown</h2>
+            </div>
+            <div class="">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-2xl font-semibold drawdown-value">
+                  ${value.toFixed(2)}%
+                </span>
+                ${badge}
+              </div>
+              ${progress}
+              <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>${0}%</span>
+                <span>${max}%</span>
+              </div>
+              <div
+                class="flex items-center justify-between mt-2 text-xs text-gray-500"
+              >
+                <span>${value.toFixed(2)}% drawdown</span>
+                <span>${time.toLocaleString()}</span>
+              </div>
+              <div class="flex items-center justify-center mt-2">
+                ${
+                  value < max
+                    ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
+                    : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
+                }
+              </div>
+            </div>
+          </div>
+        `;
+
+          $("#max-drawdown-content").append(html);
+
+          lucide.createIcons();
+        });
+
+        function getBadge(status) {
+          switch (status) {
+            case "passed":
+              return '<span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Passed</span>';
+            case "stable":
+              return '<span class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Stable</span>';
+            case "rejected":
+              return '<span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">Rejected</span>';
+            default:
+              return '<span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded">None</span>';
+          }
+        }
+
+        function getProgress(value, max) {
+          const transform = `-${100 - value * (100 / max)}%`;
+
+          return `
+            <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
+              <div
+                class="h-full flex-1 transition-all transform ${
+                  value < max ? "bg-blue-500" : "bg-rose-500"
+                }"
+                style="transform: translateX(${transform})"
+              >
+              </div>
+            </div>
+          `;
+        }
+      };
+
+      // End Max Drawdowm Functionality
 
       $(document).ready(function () {
         // Tab switching logic
@@ -450,38 +613,13 @@
         // End Tabs Switching
 
         // Fetching Analyze Data
-
-        const login = 295847;
+        const login = 115211;
 
         const url = `https://socket.unfxco.com/mt5/api/analyze/basic?login=${login}`;
 
-        $.ajax({
-          url: url,
-          method: "GET",
-          headers: {
-            APIKey:
-              "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20",
-          },
-          success: function (data) {
-            const {
-              user,
-              nowStatus,
-              summary,
-              countTrade,
-              propAnalyze,
-              positions,
-              orders,
-              historyBalance,
-              historyGrowth,
-            } = data;
-            console.log(data);
-
-            console.log();
-            // $("#data-container").text(data);
-          },
-          error: function () {
-            // $("#data-container").text("Failed to load ");
-          },
+        const analyzeData = fetchData(url, {
+          statusId: "analyze-status",
+          dataId: "analyze",
         });
         // End Fetching Analyze Data
 
@@ -510,8 +648,34 @@
         };
 
         renderPropAnalyze(propAnalyze);
-
         // End Display Prop Analyze
+
+        // Display Max Drawdown
+        const maxDrawdown = {
+          maxFloatingDrawdown: 0.0538,
+          maxFloatingDrawdownTime: "2024-08-12T13:40:08Z",
+          maxStartBalanceDrawdown: 0.0407,
+          maxStartBalanceDrawdownTime: "2024-08-12T13:40:08Z",
+          maxAllTimeBalanceDrawdown: 0.0538,
+          maxAllTimeBalanceDrawdownTime: "2024-08-12T13:40:09Z",
+          maxDayBalanceDrawdown: 0.0538,
+          maxDayBalanceDrawdownTime: "2024-08-12T13:40:09Z",
+          maxEODBalanceDrawdown: 0.05,
+          maxEODBalanceDrawdownTime: "2024-08-12T13:40:09Z",
+        };
+
+        const showChartDrawdown = {
+          fixStartRole: 0,
+          fixEODRole: 0,
+          fixMATRole: 0,
+          fixMDRole: 0,
+          perStartRole: 10,
+          perEODRole: 5,
+          perMDRole: 5,
+          perMATRole: 0,
+        };
+        renderMaxDrawdown({ ...showChartDrawdown, ...maxDrawdown });
+        // End Display Max Drawdown
 
         // Initialize DataTables
         $("#salesTable").DataTable();
