@@ -74,6 +74,77 @@
         </div>
       </div>
       <!-- End Summary Chart -->
+
+      <!-- Prop Analyze -->
+      <div class="rounded-2xl col-span-4 md:col-span-2">
+        <!-- <h2 class="text-lg font-semibold mb-6">Prop Analyze</h2> -->
+        <div class="grid lg:grid-cols-2 gap-3" id="prop-analyze-content">
+          <!-- Render Prop Analyze Items -->
+        </div>
+      </div>
+      <!-- End Prop Analyze -->
+
+      <!-- Max Drawdown Items -->
+      <!-- <div
+        id="max-drawdown-loading"
+        class="w-full h-[200px] grid lg:grid-cols-2 gap-3 2xl:grid-cols-4 col-span-4"
+      >
+        <div
+          class="rounded-2xl bg-white shadow flex justify-center items-center"
+        >
+          Loading ...
+        </div>
+        <div
+          class="rounded-2xl bg-white shadow flex justify-center items-center"
+        >
+          Loading ...
+        </div>
+        <div
+          class="rounded-2xl bg-white shadow flex justify-center items-center"
+        >
+          Loading ...
+        </div>
+        <div
+          class="rounded-2xl bg-white shadow flex justify-center items-center"
+        >
+          Loading ...
+        </div>
+      </div> -->
+      <div
+        id="max-drawdown-content"
+        class="w-full grid lg:grid-cols-2 gap-3 2xl:grid-cols-4 col-span-4"
+      >
+        <!-- Render Max Drawdown -->
+      </div>
+      <!-- End Max Drawdown Items -->
+
+      <!-- History Charts -->
+      <div class="card col-span-4 p-5 rounded-2xl bg-white shadow">
+        <div class="card-header flex md:flex-row justify-between gap-y-5">
+          <div class="text-lg font-medium flex items-center gap-2">
+            Balance & Growth
+          </div>
+          <div class="tabs-list w-fit p-1 rounded-xl bg-gray-100">
+            <button class="history-tabs-button px-3 py-1" id="balance-tab">
+              balance
+            </button>
+            <button class="history-tabs-button px-3 py-1" id="growth-tab">
+              growth
+            </button>
+          </div>
+        </div>
+        <div id="history-charts-content">
+          <div class="" id="balance">
+            <div>asasasasfd</div>
+            <canvas id="balanceChart" class="max-h-[550px]"></canvas>
+          </div>
+          <div class="" id="growth">
+            <div>asasasasfd</div>
+            <canvas id="growthChart" class="max-h-[550px]"></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- End History Charts -->
     </div>
     <!-- End Analyze Tab Content -->
 
@@ -163,21 +234,19 @@
             : '<i data-lucide="trending-down" class="text-red-500 w-4 h-4"></i>';
 
         return `
-                <div>
-                  <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
-                    <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
-                    <div class="text-sm font-medium">${title}</div>
-                  </div>
-                  <div>
-                    <div class="text-xl font-semibold">${formatValue(
-                      value
-                    )}</div>
-                    <p class="text-xs text-muted-foreground flex gap-1">
-                      ${trendIcon} ${Math.abs(value).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              `;
+          <div>
+            <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
+              <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
+              <div class="text-sm font-medium">${title}</div>
+            </div>
+            <div>
+              <div class="text-xl font-semibold">${formatValue(value)}</div>
+              <p class="text-xs text-muted-foreground flex gap-1">
+                ${trendIcon} ${Math.abs(value).toFixed(2)}
+              </p>
+            </div>
+          </div>
+        `;
       }
 
       function renderSumStats(data) {
@@ -348,23 +417,23 @@
             .toLowerCase()}`;
 
           const html = `
-                  <div class="space-y-4 shadow bg-white rounded-2xl p-6">
-                    <div class="flex items-center justify-between">
-                      <div class="flex items-center space-x-2">
-                        <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
-                        <span class="text-base font-semibold">${item.label}</span>
-                      </div>
-                      ${statusBadge}
-                    </div>
-                    <div class="flex items-center space-x-4">
-                      <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
-                      <div>
-                        <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
-                        <p class="text-sm text-gray-400">Progress</p>
-                      </div>
-                    </div>
-                  </div>
-                `;
+            <div class="space-y-4 shadow bg-white rounded-2xl p-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
+                  <span class="text-base font-semibold">${item.label}</span>
+                </div>
+                ${statusBadge}
+              </div>
+              <div class="flex items-center space-x-4">
+                <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
+                <div>
+                  <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
+                  <p class="text-sm text-gray-400">Progress</p>
+                </div>
+              </div>
+            </div>
+          `;
 
           $("#prop-analyze-content").append(html);
 
@@ -471,38 +540,38 @@
           const date = new Date(time);
 
           const html = `
-                <div class="overflow-hidden rounded-2xl shadow bg-white p-4">
-                  <div class="flex flex-row justify-between items-center pb-4">
-                    <h2 class="text-base font-medium">${title} balance max drawdown</h2>
-                  </div>
-                  <div class="">
-                    <div class="flex items-center justify-between mb-2">
-                      <span class="text-2xl font-semibold drawdown-value">
-                        ${value.toFixed(2)}%
-                      </span>
-                      ${badge}
-                    </div>
-                    ${progress}
-                    <div class="flex justify-between text-xs text-gray-500 mt-1">
-                      <span>${0}%</span>
-                      <span>${max}%</span>
-                    </div>
-                    <div
-                      class="flex items-center justify-between mt-2 text-xs text-gray-500"
-                    >
-                      <span>${value.toFixed(2)}% drawdown</span>
-                      <span>${date.toLocaleString()}</span>
-                    </div>
-                    <div class="flex items-center justify-center mt-2">
-                      ${
-                        value < max
-                          ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
-                          : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
-                      }
-                    </div>
-                  </div>
-                </div>
-              `;
+                      <div class="overflow-hidden rounded-2xl shadow bg-white p-4">
+                        <div class="flex flex-row justify-between items-center pb-4">
+                          <h2 class="text-base font-medium">${title} balance max drawdown</h2>
+                        </div>
+                        <div class="">
+                          <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl font-semibold drawdown-value">
+                              ${value.toFixed(2)}%
+                            </span>
+                            ${badge}
+                          </div>
+                          ${progress}
+                          <div class="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>${0}%</span>
+                            <span>${max}%</span>
+                          </div>
+                          <div
+                            class="flex items-center justify-between mt-2 text-xs text-gray-500"
+                          >
+                            <span>${value.toFixed(2)}% drawdown</span>
+                            <span>${date.toLocaleString()}</span>
+                          </div>
+                          <div class="flex items-center justify-center mt-2">
+                            ${
+                              value < max
+                                ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
+                                : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    `;
 
           $("#max-drawdown-content").append(html);
 
@@ -526,16 +595,16 @@
           const transform = `-${100 - value * (100 / max)}%`;
 
           return `
-                  <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
-                    <div
-                      class="h-full flex-1 transition-all transform ${
-                        value < max ? "bg-blue-500" : "bg-rose-500"
-                      }"
-                      style="transform: translateX(${transform})"
-                    >
-                    </div>
-                  </div>
-                `;
+                        <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
+                          <div
+                            class="h-full flex-1 transition-all transform ${
+                              value < max ? "bg-blue-500" : "bg-rose-500"
+                            }"
+                            style="transform: translateX(${transform})"
+                          >
+                          </div>
+                        </div>
+                      `;
         }
       };
 
@@ -543,22 +612,33 @@
 
       // History Charts
       const renderHistoryCharts = (balances, growthes) => {
-        const historyTabOptions = {
-          defaultTabId: "balance",
-          activeClasses:
-            "text-blue-600 hover:text-blue-600 rounded-lg bg-slate-100 border-none",
-          inactiveClasses: "text-gray-500 hover:text-gray-600",
-          onShow: () => {
-            console.log("tab is shown");
-          },
-        };
+        const $content = $("#history-charts-content");
+        const $tabs = $(".history-tabs-button");
+        const defaultTab = "balance";
 
-        $(".history-tabs-trigger").on("click", function () {
-          $(".history-tabs-trigger").addClass(historyTabOptions.activeClasses);
-          $(".history-tabs-content").removeClass("block");
+        function switchTab(tabName) {
+          $tabs.removeClass("text-black bg-white rounded-lg shadow");
+          $(`#${tabName}-tab`).addClass(
+            "text-black bg-white rounded-lg shadow"
+          );
 
-          $(this).addClass("text-[#d1d5db]");
-          $("#" + $(this).data("tab")).addClass("block");
+          if (tabName === "balance") {
+            $("#balance").removeClass("hidden");
+            $("#growth").addClass("hidden");
+          }
+          if (tabName === "growth") {
+            console.log("gro");
+
+            $("#growth").removeClass("hidden");
+            $("#balance").addClass("hidden");
+          }
+        }
+
+        switchTab(defaultTab);
+
+        $tabs.on("click", function () {
+          const tabName = $(this).attr("id").replace("-tab", "");
+          switchTab(tabName);
         });
 
         const balanceData = balances?.map((item) => ({
@@ -587,9 +667,9 @@
           0,
           450
         );
-        balanceGradient.addColorStop(0, "rgba(59, 130, 246, 0.7)");
-        balanceGradient.addColorStop(0.5, "rgba(59, 130, 246, 0.5)");
-        balanceGradient.addColorStop(1, "rgba(59, 130, 246, 0.3)");
+        balanceGradient.addColorStop(0, "rgba(59, 130, 246, 1)");
+        balanceGradient.addColorStop(0.6, "rgba(59, 130, 246, 0.5)");
+        balanceGradient.addColorStop(1, "rgba(59, 130, 246, 0.1)");
 
         const growthGradient = growthChartCtx.createLinearGradient(
           0,
@@ -610,9 +690,12 @@
                 data: balanceData,
                 borderColor: "#3b82f6",
                 backgroundColor: balanceGradient,
+                borderWidth: 1,
+                pointStyle: "circle",
+                pointRadius: 1,
+                pointHoverRadius: 10,
                 fill: true,
-                tension: 0.4,
-                point: false,
+                tension: 0.1,
               },
             ],
           },
@@ -637,11 +720,11 @@
               y: {
                 beginAtZero: false,
                 grid: {
-                  color: "#d1d5db",
+                  color: "#e5e5e5",
                   drawBorder: false,
                 },
                 ticks: {
-                  count: 20,
+                  count: 10,
                   callback: function (value) {
                     return `$${value.toFixed(2)}`;
                   },
@@ -683,8 +766,12 @@
                 data: growthData,
                 borderColor: "#a855f7",
                 backgroundColor: growthGradient,
+                borderWidth: 1,
+                pointStyle: "circle",
+                pointRadius: 1,
+                pointHoverRadius: 10,
                 fill: true,
-                tension: 0.4,
+                tension: 0.1,
               },
             ],
           },
@@ -709,11 +796,11 @@
               y: {
                 beginAtZero: false,
                 grid: {
-                  color: "#d1d5db",
+                  color: "#e5e5e5",
                   drawBorder: false,
                 },
                 ticks: {
-                  count: 20,
+                  count: 10,
                   callback: function (value) {
                     return `$${value.toFixed(2)}`;
                   },
