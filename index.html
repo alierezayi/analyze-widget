@@ -21,7 +21,7 @@
     <!-- Includes Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
   </head>
-  <body class="">
+  <body>
     <!-- Tabs -->
     <div class="border-b border-gray-200 px-3">
       <ul
@@ -30,7 +30,7 @@
       >
         <li class="me-2">
           <button
-            class="tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 rounded-t-lg group"
+            class="main-tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 group"
             id="analyze-tab"
           >
             <i data-lucide="chart-spline" class="w-4 h-4"></i>
@@ -39,7 +39,7 @@
         </li>
         <li class="me-2">
           <button
-            class="tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 rounded-t-lg group"
+            class="main-tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 group"
             id="history-tab"
           >
             <i data-lucide="history" class="w-4 h-4"></i>
@@ -51,13 +51,13 @@
     <!-- End Tabs -->
 
     <!-- Analyze Tab Content -->
-    <div id="analyze-status"></div>
+    <!-- <div id="analyze-loading" class="px-3">Loading ...</div> -->
     <div
       id="analyze"
-      class="tab-content hidden p-3 grid grid-cols-4 gap-x-3 gap-y-7"
+      class="tab-content p-3 hidden grid grid-cols-4 gap-x-3 gap-y-3 bg-gray-100"
     >
       <!-- Summary Stats -->
-      <div class="summary-card rounded-xl border p-5 col-span-4">
+      <div class="summary-card rounded-xl shadow bg-white p-5 col-span-4">
         <div
           class="summary-card-content grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-x-3 gap-y-10 col-span-4"
         >
@@ -67,31 +67,13 @@
       <!-- End Summary Stats -->
 
       <!-- Summary Chart -->
-      <div class="rounded-2xl border p-6 col-span-4 md:col-span-2">
+      <div class="rounded-2xl shadow bg-white p-6 col-span-4 md:col-span-2">
         <div class="text-lg font-semibold mb-4">Financial Overview</div>
         <div class="w-full h-[260px]">
           <canvas id="summaryChart"></canvas>
         </div>
       </div>
       <!-- End Summary Chart -->
-
-      <!-- Prop Analyze -->
-      <div class="rounded-2xl col-span-4 md:col-span-2">
-        <!-- <h2 class="text-lg font-semibold mb-6">Prop Analyze</h2> -->
-        <div class="grid lg:grid-cols-2 gap-3" id="prop-analyze-content">
-          <!-- Render Prop Analyze Items -->
-        </div>
-      </div>
-      <!-- End Prop Analyze -->
-
-      <!-- Max Drawdown Items -->
-      <div
-        id="max-drawdown-content"
-        class="w-full grid lg:grid-cols-2 gap-3 2xl:grid-cols-4 col-span-4"
-      >
-        <!-- Render Max Drawdown -->
-      </div>
-      <!-- End Max Drawdown Items -->
     </div>
     <!-- End Analyze Tab Content -->
 
@@ -99,7 +81,7 @@
     <div id="history" class="tab-content hidden">
       <h2 class="text-center mt-8">Sales Records</h2>
       <div style="width: 70%; margin: auto">
-        <table id="salesTable" class="display" style="transform: translateX()">
+        <table id="salesTable" class="display">
           <thead>
             <tr>
               <th>Month</th>
@@ -141,32 +123,25 @@
       lucide.createIcons();
 
       // Fetching Data
-      async function fetchData(url, { statusId, dataId }) {
-        const $dataEl = $(`#${statusId}`);
-        const $statusEl = $(`#${statusId}`);
-
-        $dataEl.addClass("hidden");
-
+      async function fetchData(url) {
         try {
-          $statusEl.text("Loading...");
-
-          // Fetch data
-          const res = await fetch(url, {
+          const response = await fetch(url, {
             headers: {
               APIKey:
                 "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20",
             },
           });
-          if (!res.ok) {
-            throw new Error(`HTTP error! Status: ${res.status}`);
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
           }
+          const data = await response.json();
+          console.log(response);
 
-          $dataEl.removeClass("hidden");
-
-          const data = await res.json();
           return data;
         } catch (error) {
-          $statusEl.text(`Error: ${error.message}`).addClass("text-rose-500");
+          console.error("There was a problem with the fetch operation:", error);
+          return null;
         }
       }
       // End Fetching Data
@@ -188,19 +163,21 @@
             : '<i data-lucide="trending-down" class="text-red-500 w-4 h-4"></i>';
 
         return `
-          <div>
-            <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
-              <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
-              <div class="text-sm font-medium">${title}</div>
-            </div>
-            <div>
-              <div class="text-xl font-semibold">${formatValue(value)}</div>
-              <p class="text-xs text-muted-foreground flex gap-1">
-                ${trendIcon} ${Math.abs(value).toFixed(2)}
-              </p>
-            </div>
-          </div>
-        `;
+                <div>
+                  <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
+                    <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
+                    <div class="text-sm font-medium">${title}</div>
+                  </div>
+                  <div>
+                    <div class="text-xl font-semibold">${formatValue(
+                      value
+                    )}</div>
+                    <p class="text-xs text-muted-foreground flex gap-1">
+                      ${trendIcon} ${Math.abs(value).toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+              `;
       }
 
       function renderSumStats(data) {
@@ -208,30 +185,30 @@
         statsContainer.empty();
 
         statsContainer.append(
-          createSumStatCard("Profit", data.sumProfit, "dollar-sign")
+          createSumStatCard("Profit", data.SumProfit, "dollar-sign")
         );
         statsContainer.append(
-          createSumStatCard("Commission", data.sumCommission, "scale")
+          createSumStatCard("Commission", data.SumCommission, "scale")
         );
         statsContainer.append(
-          createSumStatCard("Net Profit", data.sumNetProfit, "dollar-sign")
+          createSumStatCard("Net Profit", data.SumNetProfit, "dollar-sign")
         );
         statsContainer.append(
-          createSumStatCard("Swap", data.sumSwap, "arrow-left-right")
+          createSumStatCard("Swap", data.SumSwap, "arrow-left-right")
         );
         statsContainer.append(
-          createSumStatCard("Withdrawals", data.sumWithdrawals, "arrow-up")
+          createSumStatCard("Withdrawals", data.SumWithdrawals, "arrow-up")
         );
         statsContainer.append(
-          createSumStatCard("Deposits", data.sumDeposits, "arrow-down")
+          createSumStatCard("Deposits", data.SumDeposits, "arrow-down")
         );
         statsContainer.append(
-          createSumStatCard("Start Balance", data.startBalance, "wallet")
+          createSumStatCard("Start Balance", data.StartBalance, "wallet")
         );
         statsContainer.append(
           createSumStatCard(
             "Balance Drawdown",
-            data.balanceDrawdown,
+            data.BalanceDrawdown,
             "arrow-down"
           )
         );
@@ -252,12 +229,12 @@
         };
 
         const dataChart = [
-          formatChart("Sum Profit", data.sumProfit),
-          formatChart("Sum Commission", data.sumCommission),
-          formatChart("Sum Deposits", data.sumDeposits),
-          formatChart("Sum Net Profit", data.sumNetProfit),
-          formatChart("Sum Swap", data.sumSwap),
-          formatChart("Sum Withdrawals", data.sumWithdrawals),
+          formatChart("Sum Profit", data.SumProfit),
+          formatChart("Sum Commission", data.SumCommission),
+          formatChart("Sum Deposits", data.SumDeposits),
+          formatChart("Sum Net Profit", data.SumNetProfit),
+          formatChart("Sum Swap", data.SumSwap),
+          formatChart("Sum Withdrawals", data.SumWithdrawals),
         ];
 
         const labels = dataChart.map((item) => item.name);
@@ -327,34 +304,34 @@
         const propData = [
           {
             label: "6 Day Trade",
-            value: data.dayTrade,
+            value: data.DayTrade,
             max: 6,
             icon: "clock",
             iconColor: "text-blue-400",
-            status: data.dayTrade >= 6 ? "passed" : "stable",
+            status: data.DayTrade >= 6 ? "passed" : "stable",
             unit: "Day",
           },
           {
             label: "6 Day Complete Lot",
-            value: data.dayTradeCompleteVolume,
+            value: data.DayTradeCompleteVolume,
             max: 6,
             icon: "trending-up",
             iconColor: "text-purple-400",
-            status: data.dayTradeCompleteVolume >= 6 ? "passed" : "stable",
+            status: data.DayTradeCompleteVolume >= 6 ? "passed" : "stable",
             unit: "Day",
           },
           {
             label: "3 Min Trade",
-            value: data.tradeLimitTime,
+            value: data.TradeLimitTime,
             max: 3,
             icon: "activity",
             iconColor: "text-rose-400",
-            status: data.tradeLimitTime >= 3 ? "rejected" : "passed",
+            status: data.TradeLimitTime >= 3 ? "rejected" : "passed",
             unit: "Trade",
           },
           {
             label: "Relative Drawdown",
-            value: data.relativeDrawdown,
+            value: data.RelativeDrawdown,
             max: 3,
             icon: "percent",
             iconColor: "text-yellow-400",
@@ -371,23 +348,23 @@
             .toLowerCase()}`;
 
           const html = `
-            <div class="space-y-4 border rounded-2xl p-6">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                  <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
-                  <span class="text-base font-semibold">${item.label}</span>
-                </div>
-                ${statusBadge}
-              </div>
-              <div class="flex items-center space-x-4">
-                <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
-                <div>
-                  <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
-                  <p class="text-sm text-gray-400">Progress</p>
-                </div>
-              </div>
-            </div>
-          `;
+                  <div class="space-y-4 shadow bg-white rounded-2xl p-6">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center space-x-2">
+                        <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
+                        <span class="text-base font-semibold">${item.label}</span>
+                      </div>
+                      ${statusBadge}
+                    </div>
+                    <div class="flex items-center space-x-4">
+                      <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
+                      <div>
+                        <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
+                        <p class="text-sm text-gray-400">Progress</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
 
           $("#prop-analyze-content").append(html);
 
@@ -461,27 +438,27 @@
         const maxDrawDownData = [
           {
             title: "Start",
-            value: data.maxStartBalanceDrawdown * 100,
-            time: data.maxStartBalanceDrawdownTime,
-            max: data.perStartRole,
+            value: data.MaxStartBalanceDrawdown * 100,
+            time: data.MaxStartBalanceDrawdownTime,
+            max: data.PerStartRole,
           },
           {
             title: "EOD",
-            value: data.maxEODBalanceDrawdown * 100,
-            time: data.maxEODBalanceDrawdownTime,
-            max: data.perEODRole,
+            value: data.MaxEODBalanceDrawdown * 100,
+            time: data.MaxEODBalanceDrawdownTime,
+            max: data.PerEODRole,
           },
           {
             title: "MAT",
-            value: data.maxAllTimeBalanceDrawdown * 100,
-            time: data.maxAllTimeBalanceDrawdownTime,
-            max: data.perStartRole,
+            value: data.MaxAllTimeBalanceDrawdown * 100,
+            time: data.MaxAllTimeBalanceDrawdownTime,
+            max: data.PerStartRole,
           },
           {
             title: "MD",
-            value: data.maxDayBalanceDrawdown * 100,
-            time: data.maxDayBalanceDrawdownTime,
-            max: data.perMDRole,
+            value: data.MaxDayBalanceDrawdown * 100,
+            time: data.MaxDayBalanceDrawdownTime,
+            max: data.PerMDRole,
           },
         ];
 
@@ -491,39 +468,41 @@
           const badge = getBadge(status);
           const progress = getProgress(value, max);
 
+          const date = new Date(time);
+
           const html = `
-          <div class="overflow-hidden rounded-2xl border p-4">
-            <div class="flex flex-row justify-between items-center pb-4">
-              <h2 class="text-base font-medium">${title} balance max drawdown</h2>
-            </div>
-            <div class="">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-2xl font-semibold drawdown-value">
-                  ${value.toFixed(2)}%
-                </span>
-                ${badge}
-              </div>
-              ${progress}
-              <div class="flex justify-between text-xs text-gray-500 mt-1">
-                <span>${0}%</span>
-                <span>${max}%</span>
-              </div>
-              <div
-                class="flex items-center justify-between mt-2 text-xs text-gray-500"
-              >
-                <span>${value.toFixed(2)}% drawdown</span>
-                <span>${time.toLocaleString()}</span>
-              </div>
-              <div class="flex items-center justify-center mt-2">
-                ${
-                  value < max
-                    ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
-                    : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
-                }
-              </div>
-            </div>
-          </div>
-        `;
+                <div class="overflow-hidden rounded-2xl shadow bg-white p-4">
+                  <div class="flex flex-row justify-between items-center pb-4">
+                    <h2 class="text-base font-medium">${title} balance max drawdown</h2>
+                  </div>
+                  <div class="">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-2xl font-semibold drawdown-value">
+                        ${value.toFixed(2)}%
+                      </span>
+                      ${badge}
+                    </div>
+                    ${progress}
+                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>${0}%</span>
+                      <span>${max}%</span>
+                    </div>
+                    <div
+                      class="flex items-center justify-between mt-2 text-xs text-gray-500"
+                    >
+                      <span>${value.toFixed(2)}% drawdown</span>
+                      <span>${date.toLocaleString()}</span>
+                    </div>
+                    <div class="flex items-center justify-center mt-2">
+                      ${
+                        value < max
+                          ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
+                          : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
+                      }
+                    </div>
+                  </div>
+                </div>
+              `;
 
           $("#max-drawdown-content").append(html);
 
@@ -547,24 +526,230 @@
           const transform = `-${100 - value * (100 / max)}%`;
 
           return `
-            <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
-              <div
-                class="h-full flex-1 transition-all transform ${
-                  value < max ? "bg-blue-500" : "bg-rose-500"
-                }"
-                style="transform: translateX(${transform})"
-              >
-              </div>
-            </div>
-          `;
+                  <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
+                    <div
+                      class="h-full flex-1 transition-all transform ${
+                        value < max ? "bg-blue-500" : "bg-rose-500"
+                      }"
+                      style="transform: translateX(${transform})"
+                    >
+                    </div>
+                  </div>
+                `;
         }
       };
 
       // End Max Drawdowm Functionality
 
-      $(document).ready(function () {
+      // History Charts
+      const renderHistoryCharts = (balances, growthes) => {
+        const historyTabOptions = {
+          defaultTabId: "balance",
+          activeClasses:
+            "text-blue-600 hover:text-blue-600 rounded-lg bg-slate-100 border-none",
+          inactiveClasses: "text-gray-500 hover:text-gray-600",
+          onShow: () => {
+            console.log("tab is shown");
+          },
+        };
+
+        $(".history-tabs-trigger").on("click", function () {
+          $(".history-tabs-trigger").addClass(historyTabOptions.activeClasses);
+          $(".history-tabs-content").removeClass("block");
+
+          $(this).addClass("text-[#d1d5db]");
+          $("#" + $(this).data("tab")).addClass("block");
+        });
+
+        const balanceData = balances?.map((item) => ({
+          x: new Date(item.Time).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+          y: item.Balance.toFixed(2),
+        }));
+
+        const growthData = growthes?.map((item) => ({
+          x: new Date(item.Time).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          }),
+          y: item.Balance.toFixed(2),
+        }));
+        console.log(balances);
+
+        const balanceChartCtx = $("#balanceChart")[0].getContext("2d");
+        const growthChartCtx = $("#growthChart")[0].getContext("2d");
+
+        const balanceGradient = balanceChartCtx.createLinearGradient(
+          0,
+          0,
+          0,
+          450
+        );
+        balanceGradient.addColorStop(0, "rgba(59, 130, 246, 0.7)");
+        balanceGradient.addColorStop(0.5, "rgba(59, 130, 246, 0.5)");
+        balanceGradient.addColorStop(1, "rgba(59, 130, 246, 0.3)");
+
+        const growthGradient = growthChartCtx.createLinearGradient(
+          0,
+          0,
+          0,
+          450
+        );
+        growthGradient.addColorStop(0, "rgba(153, 102, 255, 1)");
+        growthGradient.addColorStop(0.5, "rgba(153, 102, 255, 0.8)");
+        growthGradient.addColorStop(1, "rgba(153, 102, 255, 0.1)");
+
+        const balanceChart = new Chart(balanceChartCtx, {
+          type: "line",
+          data: {
+            datasets: [
+              {
+                label: "Balance",
+                data: balanceData,
+                borderColor: "#3b82f6",
+                backgroundColor: balanceGradient,
+                fill: true,
+                tension: 0.4,
+                point: false,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              x: {
+                type: "category",
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  callback: function (value) {
+                    return new Date(
+                      this.getLabelForValue(value)
+                    ).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    });
+                  },
+                },
+              },
+              y: {
+                beginAtZero: false,
+                grid: {
+                  color: "#d1d5db",
+                  drawBorder: false,
+                },
+                ticks: {
+                  count: 20,
+                  callback: function (value) {
+                    return `$${value.toFixed(2)}`;
+                  },
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: function (context) {
+                    return new Date(context[0].label).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    );
+                  },
+                  label: function (context) {
+                    return `Balance: ${new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    }).format(context.raw.y)}`;
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        // Initialize Growth Chart
+        const growthChart = new Chart(growthChartCtx, {
+          type: "line",
+          data: {
+            datasets: [
+              {
+                label: "Growth",
+                data: growthData,
+                borderColor: "#a855f7",
+                backgroundColor: growthGradient,
+                fill: true,
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              x: {
+                type: "category",
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  callback: function (value) {
+                    return new Date(
+                      this.getLabelForValue(value)
+                    ).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                    });
+                  },
+                },
+              },
+              y: {
+                beginAtZero: false,
+                grid: {
+                  color: "#d1d5db",
+                  drawBorder: false,
+                },
+                ticks: {
+                  count: 20,
+                  callback: function (value) {
+                    return `$${value.toFixed(2)}`;
+                  },
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: function (context) {
+                    return new Date(context[0].label).toLocaleDateString(
+                      "en-US",
+                      {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      }
+                    );
+                  },
+                  label: function (context) {
+                    return `Growth: ${new Intl.NumberFormat("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    }).format(context.raw.y)}`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      };
+      // End History Charts
+
+      $(document).ready(async function () {
         // Tab switching logic
-        const tabElements = [
+        const MainTabElements = [
           {
             id: "analyze",
             triggerEl: $("#analyze-tab"),
@@ -577,7 +762,7 @@
           },
         ];
 
-        const tabOptions = {
+        const MainTabOptions = {
           defaultTabId: "analyze",
           activeClasses:
             "text-blue-600 hover:text-blue-600 rounded-lg bg-slate-100 border-none",
@@ -588,25 +773,25 @@
         };
 
         function showTab(tabId) {
-          tabElements.forEach((tab) => {
+          MainTabElements.forEach((tab) => {
             if (tab.id === tabId) {
               tab.triggerEl
-                .addClass(tabOptions.activeClasses)
-                .removeClass(tabOptions.inactiveClasses);
+                .addClass(MainTabOptions.activeClasses)
+                .removeClass(MainTabOptions.inactiveClasses);
               tab.targetEl.removeClass("hidden");
-              tabOptions.onShow();
+              MainTabOptions.onShow();
             } else {
               tab.triggerEl
-                .removeClass(tabOptions.activeClasses)
-                .addClass(tabOptions.inactiveClasses);
+                .removeClass(MainTabOptions.activeClasses)
+                .addClass(MainTabOptions.inactiveClasses);
               tab.targetEl.addClass("hidden");
             }
           });
         }
 
-        showTab(tabOptions.defaultTabId);
+        showTab(MainTabOptions.defaultTabId);
 
-        $(".tab-button").on("click", function () {
+        $(".main-tab-button").on("click", function () {
           const tabId = $(this).attr("id").split("-")[0];
           showTab(tabId);
         });
@@ -615,67 +800,72 @@
         // Fetching Analyze Data
         const login = 115211;
 
-        const url = `https://socket.unfxco.com/mt5/api/analyze/basic?login=${login}`;
+        const analyzeUrl = `https://socket.unfxco.com/mt5/api/analyze/basic?login=${login}`;
+        const analyzeData = await fetchData(analyzeUrl);
+        // const drawdownUrl = `https://socket.unfxco.com/mt5/api/analyze/drawdown/chart?login=${login}`;
+        // const drawdownData = await fetchData(drawdownUrl);
 
-        const analyzeData = fetchData(url, {
-          statusId: "analyze-status",
-          dataId: "analyze",
-        });
-        // End Fetching Analyze Data
+        console.log(analyzeData);
+        // console.log(drawdownData);
 
-        // Display Summary
-        const summary = {
-          sumProfit: -435.86,
-          sumCommission: -205.3,
-          sumSwap: -61.01,
-          sumNetProfit: -702.17,
-          sumDeposits: 0,
-          sumWithdrawals: 0,
-          startBalance: 20000,
-          balanceDrawdown: -5.78,
+        const {
+          Summary,
+          PropAnalyze,
+          NowStatus,
+          HistoryBalance,
+          HistoryGrowth,
+        } = analyzeData;
+
+        const { LimitVolume, ...res } = PropAnalyze;
+        const newPropAnalyze = {
+          ...res,
+          RelativeDrawdown: NowStatus.RelativeDrawdown,
         };
 
-        renderSumStats(summary);
-        renderSumChart(summary);
+        // const {
+        //   MaxAllTimeBalanceDrawdown,
+        //   MaxAllTimeBalanceDrawdownTime,
+        //   MaxDayBalanceDrawdown,
+        //   MaxDayBalanceDrawdownTime,
+        //   MaxEODBalanceDrawdown,
+        //   MaxEODBalanceDrawdownTime,
+        //   MaxFloatingDrawdown,
+        //   MaxFloatingDrawdownTime,
+        //   MaxStartBalanceDrawdown,
+        //   MaxStartBalanceDrawdownTime,
+        // } = drawdownData;
+
+        // End Fetching Analyze Data
+
+        renderSumStats(Summary);
+        renderSumChart(Summary);
         // End Display Summary
 
         // Display Prop Analyze
-        const propAnalyze = {
-          dayTrade: 3,
-          dayTradeCompleteVolume: 7,
-          relativeDrawdown: 1,
-          tradeLimitTime: 6,
-        };
-
-        renderPropAnalyze(propAnalyze);
+        renderPropAnalyze(newPropAnalyze);
         // End Display Prop Analyze
 
         // Display Max Drawdown
-        const maxDrawdown = {
-          maxFloatingDrawdown: 0.0538,
-          maxFloatingDrawdownTime: "2024-08-12T13:40:08Z",
-          maxStartBalanceDrawdown: 0.0407,
-          maxStartBalanceDrawdownTime: "2024-08-12T13:40:08Z",
-          maxAllTimeBalanceDrawdown: 0.0538,
-          maxAllTimeBalanceDrawdownTime: "2024-08-12T13:40:09Z",
-          maxDayBalanceDrawdown: 0.0538,
-          maxDayBalanceDrawdownTime: "2024-08-12T13:40:09Z",
-          maxEODBalanceDrawdown: 0.05,
-          maxEODBalanceDrawdownTime: "2024-08-12T13:40:09Z",
-        };
+        // const maxDrawdown = {
+        //   MaxAllTimeBalanceDrawdown,
+        //   MaxAllTimeBalanceDrawdownTime,
+        //   MaxDayBalanceDrawdown,
+        //   MaxDayBalanceDrawdownTime,
+        //   MaxEODBalanceDrawdown,
+        //   MaxEODBalanceDrawdownTime,
+        //   MaxFloatingDrawdown,
+        //   MaxFloatingDrawdownTime,
+        //   MaxStartBalanceDrawdown,
+        //   MaxStartBalanceDrawdownTime,
+        // };
 
-        const showChartDrawdown = {
-          fixStartRole: 0,
-          fixEODRole: 0,
-          fixMATRole: 0,
-          fixMDRole: 0,
-          perStartRole: 10,
-          perEODRole: 5,
-          perMDRole: 5,
-          perMATRole: 0,
-        };
-        renderMaxDrawdown({ ...showChartDrawdown, ...maxDrawdown });
+        // renderMaxDrawdown({
+        //   ...drawdownData.ShowChartDrawdown,
+        //   ...maxDrawdown,
+        // });
         // End Display Max Drawdown
+
+        renderHistoryCharts(HistoryBalance, HistoryGrowth);
 
         // Initialize DataTables
         $("#salesTable").DataTable();
