@@ -134,17 +134,125 @@
           </div>
         </div>
         <div id="history-charts-content">
-          <div class="" id="balance">
-            <div>asasasasfd</div>
+          <div id="balance">
             <canvas id="balanceChart" class="max-h-[550px]"></canvas>
           </div>
-          <div class="" id="growth">
-            <div>asasasasfd</div>
+          <div id="growth">
             <canvas id="growthChart" class="max-h-[550px]"></canvas>
           </div>
         </div>
       </div>
       <!-- End History Charts -->
+
+      <!-- Tradeing Methods -->
+      <div
+        class="col-span-4 lg:col-span-2 2xl:col-span-1 bg-white rounded-2xl shadow p-6"
+      >
+        <div class="text-lg font-semibold mb-4">Trading Methods</div>
+        <div class="flex flex-col items-center">
+          <canvas
+            id="tradingMethodsChart"
+            class="aspect-square min-w-[100px] max-w-[300px] -mt-3"
+          ></canvas>
+          <div
+            class="grid grid-cols-2 w-full gap-x-0 gap-y-10 mt-3"
+            id="tradingMethodsInfoCards"
+          >
+            <!-- Info cards will be dynamically generated here -->
+          </div>
+        </div>
+      </div>
+      <!-- End Tradeing Methods -->
+
+      <!-- Profit vs Loss -->
+      <div
+        class="col-span-4 lg:col-span-2 2xl:col-span-1 bg-white rounded-2xl shadow p-6"
+      >
+        <div class="text-lg font-semibold mb-4">Profit vs Loss</div>
+        <canvas
+          id="countTradeRadialChart"
+          class="aspect-square min-w-[100px] max-w-[200px] max-h-[200px] mx-auto mb-12"
+        ></canvas>
+        <div class="flex justify-center items-center w-full gap-7">
+          <div class="flex flex-col items-center">
+            <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
+            <div class="text-2xl font-semibold" id="profitPercentage">
+              <!-- Profit Percent -->
+            </div>
+            <div class="text-sm text-muted-foreground" id="profitCount">
+              <!-- Profit -->
+            </div>
+          </div>
+          <div class="text-base font-semibold">vs</div>
+          <div class="flex flex-col items-center">
+            <i data-lucide="trending-down" class="w-5 h-5 text-red-500"></i>
+            <div class="text-2xl font-semibold" id="lossPercentage">
+              <!-- Loss Percent -->
+            </div>
+            <div class="text-sm text-muted-foreground" id="lossCount">
+              <!-- Loss -->
+            </div>
+          </div>
+        </div>
+        <hr class="mt-10 mb-5 border-gray-200" />
+        <div class="w-full flex flex-col gap-4">
+          <div>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2 w-full">
+                <i data-lucide="bar-chart"></i>
+                <div class="text-sm font-medium">Total Trades</div>
+              </div>
+              <div id="totalTrades" class="text-xl font-semibold"></div>
+            </div>
+            <p class="text-[13px] text-gray-500">Total trades analyzed</p>
+          </div>
+          <div>
+            <div class="flex justify-between items-center mt-4">
+              <div class="flex items-center gap-2 w-full">
+                <i data-lucide="pie-chart"></i>
+                <div class="text-sm font-medium">Profit Factor</div>
+              </div>
+              <div id="profitFactor" class="text-xl font-semibold"></div>
+            </div>
+            <p class="text-[13px] text-gray-500" id="dayTradeAverage"></p>
+          </div>
+        </div>
+      </div>
+      <!-- End Profit vs Loss -->
+
+      <!-- Now Status -->
+      <div
+        class="w-full max-w-4xl mx-auto col-span-2 bg-white rounded-2xl shadow p-6"
+      >
+        <div class="card-header">
+          <h2 class="text-xl font-semibold">Now Status</h2>
+        </div>
+        <div class="mt-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20 h-64">
+            <div>
+              <h3 class="text-base font-semibold mb-2">Balance Range</h3>
+              <canvas
+                id="balanceRangeChart"
+                height="250"
+                class="w-full h-full"
+              ></canvas>
+            </div>
+            <div class="">
+              <h3 class="text-base font-semibold mb-2">Account Overview</h3>
+              <canvas
+                id="accountOverviewChart"
+                height="250"
+                class="w-full h-full"
+              ></canvas>
+            </div>
+          </div>
+          <div
+            id="statsContainer"
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10"
+          ></div>
+        </div>
+      </div>
+      <!-- End Now Status -->
     </div>
     <!-- End Analyze Tab Content -->
 
@@ -234,19 +342,19 @@
             : '<i data-lucide="trending-down" class="text-red-500 w-4 h-4"></i>';
 
         return `
-          <div>
-            <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
-              <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
-              <div class="text-sm font-medium">${title}</div>
-            </div>
-            <div>
-              <div class="text-xl font-semibold">${formatValue(value)}</div>
-              <p class="text-xs text-muted-foreground flex gap-1">
-                ${trendIcon} ${Math.abs(value).toFixed(2)}
-              </p>
-            </div>
-          </div>
-        `;
+              <div>
+                <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
+                  <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
+                  <div class="text-sm font-medium">${title}</div>
+                </div>
+                <div>
+                  <div class="text-xl font-semibold">${formatValue(value)}</div>
+                  <p class="text-xs text-muted-foreground flex gap-1">
+                    ${trendIcon} ${Math.abs(value).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            `;
       }
 
       function renderSumStats(data) {
@@ -417,23 +525,23 @@
             .toLowerCase()}`;
 
           const html = `
-            <div class="space-y-4 shadow bg-white rounded-2xl p-6">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                  <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
-                  <span class="text-base font-semibold">${item.label}</span>
+                <div class="space-y-4 shadow bg-white rounded-2xl p-6">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                      <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
+                      <span class="text-base font-semibold">${item.label}</span>
+                    </div>
+                    ${statusBadge}
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
+                    <div>
+                      <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
+                      <p class="text-sm text-gray-400">Progress</p>
+                    </div>
+                  </div>
                 </div>
-                ${statusBadge}
-              </div>
-              <div class="flex items-center space-x-4">
-                <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
-                <div>
-                  <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
-                  <p class="text-sm text-gray-400">Progress</p>
-                </div>
-              </div>
-            </div>
-          `;
+              `;
 
           $("#prop-analyze-content").append(html);
 
@@ -540,38 +648,38 @@
           const date = new Date(time);
 
           const html = `
-                      <div class="overflow-hidden rounded-2xl shadow bg-white p-4">
-                        <div class="flex flex-row justify-between items-center pb-4">
-                          <h2 class="text-base font-medium">${title} balance max drawdown</h2>
-                        </div>
-                        <div class="">
-                          <div class="flex items-center justify-between mb-2">
-                            <span class="text-2xl font-semibold drawdown-value">
-                              ${value.toFixed(2)}%
-                            </span>
-                            ${badge}
+                          <div class="overflow-hidden rounded-2xl shadow bg-white p-4">
+                            <div class="flex flex-row justify-between items-center pb-4">
+                              <h2 class="text-base font-medium">${title} balance max drawdown</h2>
+                            </div>
+                            <div class="">
+                              <div class="flex items-center justify-between mb-2">
+                                <span class="text-2xl font-semibold drawdown-value">
+                                  ${value.toFixed(2)}%
+                                </span>
+                                ${badge}
+                              </div>
+                              ${progress}
+                              <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                <span>${0}%</span>
+                                <span>${max}%</span>
+                              </div>
+                              <div
+                                class="flex items-center justify-between mt-2 text-xs text-gray-500"
+                              >
+                                <span>${value.toFixed(2)}% drawdown</span>
+                                <span>${date.toLocaleString()}</span>
+                              </div>
+                              <div class="flex items-center justify-center mt-2">
+                                ${
+                                  value < max
+                                    ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
+                                    : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
+                                }
+                              </div>
+                            </div>
                           </div>
-                          ${progress}
-                          <div class="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>${0}%</span>
-                            <span>${max}%</span>
-                          </div>
-                          <div
-                            class="flex items-center justify-between mt-2 text-xs text-gray-500"
-                          >
-                            <span>${value.toFixed(2)}% drawdown</span>
-                            <span>${date.toLocaleString()}</span>
-                          </div>
-                          <div class="flex items-center justify-center mt-2">
-                            ${
-                              value < max
-                                ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
-                                : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
-                            }
-                          </div>
-                        </div>
-                      </div>
-                    `;
+                        `;
 
           $("#max-drawdown-content").append(html);
 
@@ -595,16 +703,16 @@
           const transform = `-${100 - value * (100 / max)}%`;
 
           return `
-                        <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
-                          <div
-                            class="h-full flex-1 transition-all transform ${
-                              value < max ? "bg-blue-500" : "bg-rose-500"
-                            }"
-                            style="transform: translateX(${transform})"
-                          >
-                          </div>
-                        </div>
-                      `;
+                            <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
+                              <div
+                                class="h-full flex-1 transition-all transform ${
+                                  value < max ? "bg-blue-500" : "bg-rose-500"
+                                }"
+                                style="transform: translateX(${transform})"
+                              >
+                              </div>
+                            </div>
+                          `;
         }
       };
 
@@ -656,7 +764,6 @@
           }),
           y: item.Balance.toFixed(2),
         }));
-        console.log(balances);
 
         const balanceChartCtx = $("#balanceChart")[0].getContext("2d");
         const growthChartCtx = $("#growthChart")[0].getContext("2d");
@@ -692,7 +799,7 @@
                 backgroundColor: balanceGradient,
                 borderWidth: 1,
                 pointStyle: "circle",
-                pointRadius: 1,
+                pointRadius: 0,
                 pointHoverRadius: 10,
                 fill: true,
                 tension: 0.1,
@@ -768,7 +875,7 @@
                 backgroundColor: growthGradient,
                 borderWidth: 1,
                 pointStyle: "circle",
-                pointRadius: 1,
+                pointRadius: 0,
                 pointHoverRadius: 10,
                 fill: true,
                 tension: 0.1,
@@ -833,6 +940,327 @@
         });
       };
       // End History Charts
+
+      // Trading Methods
+      const renderTradimgMethodsChart = (data) => {
+        const chartData = {
+          labels: ["Mobile", "Client", "Web", "Algo"],
+          datasets: [
+            {
+              label: "Percent",
+              data: [
+                data.CountMobileTradingPercentage,
+                data.CountClientTradingPercentage,
+                data.CountWebTradingPercentage,
+                data.CountAlgoTradingPercentage,
+              ],
+              backgroundColor: "rgba(236, 72, 153, 0.6)",
+              borderColor: "rgba(236, 72, 153, 1)",
+              borderWidth: 1,
+              pointBackgroundColor: "rgba(236, 72, 153, 1)",
+            },
+          ],
+        };
+
+        const tradingMethodsChart = new Chart(
+          document.getElementById("tradingMethodsChart"),
+          {
+            type: "radar",
+            data: chartData,
+            options: {
+              scales: {
+                r: {
+                  grid: {
+                    circular: true, // This makes the grid circular
+                  },
+                  // angleLines: { display: false },
+                  suggestedMin: 0,
+                  suggestedMax: 100,
+                  ticks: {
+                    callback: (value) => `${value}%`,
+                  },
+                },
+              },
+              plugins: {
+                tooltip: {
+                  callbacks: {
+                    label: function (context) {
+                      return `${context.raw}%`;
+                    },
+                  },
+                },
+              },
+            },
+          }
+        );
+      };
+
+      const renderTradingMethods = (data) => {
+        const platformData = [
+          {
+            label: "Mobile Trading",
+            value: data.CountMobileTrading,
+            percent: data.CountMobileTradingPercentage,
+            icon: "smartphone",
+            iconColor: "text-blue-500",
+          },
+          {
+            label: "Client Trading",
+            value: data.CountClientTrading,
+            percent: data.CountClientTradingPercentage,
+            icon: "briefcase",
+            iconColor: "text-green-500",
+          },
+          {
+            label: "Web Trading",
+            value: data.CountWebTrading,
+            percent: data.CountWebTradingPercentage,
+            icon: "laptop-minimal",
+            iconColor: "text-yellow-500",
+          },
+          {
+            label: "Algo Trading",
+            value: data.CountAlgoTrading,
+            percent: data.CountAlgoTradingPercentage,
+            icon: "cpu",
+            iconColor: "text-purple-500",
+          },
+        ];
+
+        const $tradingMethodsInfoCards = $("#tradingMethodsInfoCards");
+
+        platformData.forEach((item) => {
+          const cardHtml = `
+                <div class="rounded-lg flex flex-col items-center">
+                  <div class="flex items-center gap-1.5">
+                    <i data-lucide="${item.icon}" class="h-4 w-4 ${item.iconColor}"></i>
+                    <span class="font-medium">${item.label}</span>
+                  </div>
+                  <div class="mt-1 flex flex-col items-center">
+                    <p class="text-2xl font-semibold">${item.value}</p>
+                    <p class="text-xs text-gray-500">
+                      ${item.percent}
+                      <i data-lucide="percent" class="h-3 w-3 inline-block"></i> of total
+                    </p>
+                  </div>
+                </div>
+              `;
+          $tradingMethodsInfoCards.append(cardHtml);
+
+          lucide.createIcons();
+        });
+      };
+      // End Trading Methods
+
+      // Profit vs Loss
+      const renderProfitVsLoss = (data) => {
+        $("#profitPercentage").text(`${data.CountProfitTradesPercentage}%`);
+        $("#profitCount").text(`${data.CountProfitTrades} Profit`);
+        $("#lossPercentage").text(`${data.CountLossTradesPercentage}%`);
+        $("#lossCount").text(`${data.CountLossTrades} Loss`);
+        $("#totalTrades").text(data.CountTrades);
+        $("#profitFactor").text(data.ProfitFactor);
+        $("#dayTradeAverage").text(`${data.CountDayTrade} Day Trade average`);
+      };
+
+      const renderProfitVsLossChart = (data) => {
+        const ctx = document
+          .getElementById("countTradeRadialChart")
+          .getContext("2d");
+        const countTradeRadialChart = new Chart(ctx, {
+          type: "doughnut",
+          data: {
+            labels: ["Profit", "Loss"],
+            datasets: [
+              {
+                data: [data.CountProfitTrades, data.CountLossTrades],
+                backgroundColor: ["#3b82f6", "#f43f5e"],
+                hoverBackgroundColor: ["#60a5fa", "#fb7185"],
+                borderWidth: 5,
+                cutout: "70%",
+                rotation: 270, // start angle at the top
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const label = context.label || "";
+                    return label + ": " + context.raw + " Trades";
+                  },
+                },
+              },
+            },
+            circumference: 180, // 180-degree chart
+            rotation: 270, // rotate to start at the top
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      };
+      // End Profit vs Loss
+
+      // Now Status
+      const renderNowStatus = (data) => {
+        const {
+          Equity,
+          Balance,
+          Margin,
+          FreeMargin,
+          FreeMarginDrawdown,
+          MarginLevel,
+          Profit,
+          StartBalanceDrawdown,
+          MinBalanceEquity,
+          MaxBalanceEquity,
+        } = data;
+
+        const stats = [
+          {
+            icon: "dollar-sign",
+            color: "text-blue-500",
+            label: "Balance",
+            value: `$${Balance.toFixed(2)}`,
+          },
+          {
+            icon: "trending-up",
+            color: "text-green-500",
+            label: "Equity",
+            value: `$${Equity.toFixed(2)}`,
+          },
+          {
+            icon: "arrow-up-circle",
+            color: "text-purple-500",
+            label: "Free Margin",
+            value: `$${FreeMargin.toFixed(2)}`,
+          },
+          {
+            icon: "arrow-down-circle",
+            color: "text-red-500",
+            label: "Free Margin Drawdown",
+            value: `${FreeMarginDrawdown.toFixed(2)}%`,
+          },
+          {
+            icon: "percent",
+            color: "text-yellow-500",
+            label: "Margin Level",
+            value: `${MarginLevel.toFixed(2)}%`,
+          },
+          {
+            icon: "activity",
+            color: "text-indigo-500",
+            label: "Profit",
+            value: `$${Profit.toFixed(2)}`,
+          },
+          {
+            icon: "bar-chart-2",
+            color: "text-pink-500",
+            label: "Start Balance Drawdown",
+            value: `$${StartBalanceDrawdown.toFixed(2)}`,
+          },
+          {
+            icon: "dollar-sign",
+            color: "text-cyan-500",
+            label: "Margin",
+            value: `$${Margin.toFixed(2)}`,
+          },
+        ];
+
+        // Line chart for balance range
+        const lineChartData = {
+          labels: ["Min", "Current", "Max"],
+          datasets: [
+            {
+              label: "Value",
+              data: [MinBalanceEquity, Balance, MaxBalanceEquity],
+              borderColor: "#ec4899",
+              borderWidth: 1,
+              fill: false,
+            },
+          ],
+        };
+
+        new Chart($("#balanceRangeChart"), {
+          type: "line",
+          data: lineChartData,
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: "#d1d5db",
+                },
+              },
+              y: {
+                grid: {
+                  display: true,
+                  color: "#d1d5db",
+                },
+                ticks: {
+                  count: 5,
+                },
+              },
+            },
+          },
+        });
+
+        // Area chart for account overview
+        const areaChartData = {
+          labels: ["Balance", "Equity", "Free Margin", "Margin"],
+          datasets: [
+            {
+              label: "Value",
+              data: [Balance, Equity, FreeMargin, Margin],
+              borderColor: "#3b82f6",
+              backgroundColor: "#3b82f685",
+              fill: true,
+            },
+          ],
+        };
+
+        new Chart($("#accountOverviewChart"), {
+          type: "line",
+          data: areaChartData,
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                grid: {
+                  display: true,
+                  color: "#d1d5db",
+                },
+              },
+              y: {
+                grid: {
+                  display: true,
+                  color: "#d1d5db",
+                },
+                ticks: {
+                  count: 5,
+                },
+              },
+            },
+          },
+        });
+
+        stats.forEach((stat) => {
+          $("#statsContainer").append(`
+            <div class="flex items-center space-x-2">
+              <div>
+                <p class="text-sm text-muted-foreground flex items-center gap-2">
+                  <i data-lucide=${stat.icon} class="w-3.5 h-3.5 ${stat.color}"></i>
+                  <span class="truncate max-w-[120px]">${stat.label}</span>
+                </p>
+                <p class="text-lg font-semibold">${stat.value}</p>
+              </div>
+            </div>
+          `);
+        });
+      };
+      // End Now Status
 
       $(document).ready(async function () {
         // Tab switching logic
@@ -901,6 +1329,7 @@
           NowStatus,
           HistoryBalance,
           HistoryGrowth,
+          CountTrade,
         } = analyzeData;
 
         const { LimitVolume, ...res } = PropAnalyze;
@@ -932,6 +1361,10 @@
         renderPropAnalyze(newPropAnalyze);
         // End Display Prop Analyze
 
+        // Display Now Status
+        renderNowStatus(NowStatus);
+        // End Display Now Status
+
         // Display Max Drawdown
         // const maxDrawdown = {
         //   MaxAllTimeBalanceDrawdown,
@@ -952,7 +1385,19 @@
         // });
         // End Display Max Drawdown
 
+        // Display History Charts
         renderHistoryCharts(HistoryBalance, HistoryGrowth);
+        // End Display History Charts
+
+        // Display Trading Methods
+        renderTradingMethods(CountTrade);
+        renderTradimgMethodsChart(CountTrade);
+        // End Display Trading Methods
+
+        // Display Profit vs Loss
+        renderProfitVsLoss(CountTrade);
+        renderProfitVsLossChart(CountTrade);
+        // End Display Profit vs Loss
 
         // Initialize DataTables
         $("#salesTable").DataTable();
