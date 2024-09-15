@@ -275,177 +275,6 @@
       </div>
       <!-- End History Charts -->
 
-      <!-- Tradeing Methods -->
-      <div
-        class="col-span-4 md:col-span-2 2xl:col-span-1 bg-white rounded-2xl shadow p-6"
-      >
-        <div class="text-lg font-semibold mb-4">Trading Methods</div>
-        <div class="flex flex-col items-center">
-          <canvas
-            id="tradingMethodsChart"
-            class="aspect-square min-w-[100px] max-h-[300px] max-w-[300px] -mt-3"
-          ></canvas>
-          <div
-            class="grid grid-cols-2 w-full gap-x-0 gap-y-10 mt-3 flex-1"
-            id="tradingMethodsInfoCards"
-          >
-            <!-- Info cards will be dynamically generated here -->
-          </div>
-        </div>
-      </div>
-      <!-- End Tradeing Methods -->
-
-      <!-- Profit vs Loss -->
-      <div
-        class="col-span-4 md:col-span-2 2xl:col-span-1 bg-white rounded-2xl shadow p-6"
-      >
-        <div class="text-lg font-semibold mb-4">Profit vs Loss</div>
-        <canvas
-          id="countTradeRadialChart"
-          class="aspect-square min-w-[100px] max-w-[200px] max-h-[200px] mx-auto mb-12"
-        ></canvas>
-        <div class="flex justify-center items-center w-full gap-7">
-          <div class="flex flex-col items-center">
-            <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
-            <div class="text-2xl font-semibold" id="profitPercentage">
-              <!-- Profit Percent -->
-            </div>
-            <div class="text-sm text-muted-foreground" id="profitCount">
-              <!-- Profit -->
-            </div>
-          </div>
-          <div class="text-base font-semibold">vs</div>
-          <div class="flex flex-col items-center">
-            <i data-lucide="trending-down" class="w-5 h-5 text-red-500"></i>
-            <div class="text-2xl font-semibold" id="lossPercentage">
-              <!-- Loss Percent -->
-            </div>
-            <div class="text-sm text-muted-foreground" id="lossCount">
-              <!-- Loss -->
-            </div>
-          </div>
-        </div>
-        <hr class="mt-10 mb-5 border-gray-200" />
-        <div class="w-full flex flex-col gap-4">
-          <div>
-            <div class="flex justify-between items-center">
-              <div class="flex items-center gap-2 w-full">
-                <i data-lucide="bar-chart"></i>
-                <div class="text-sm font-medium">Total Trades</div>
-              </div>
-              <div id="totalTrades" class="text-xl font-semibold"></div>
-            </div>
-            <p class="text-[13px] text-gray-500">Total trades analyzed</p>
-          </div>
-          <div>
-            <div class="flex justify-between items-center mt-4">
-              <div class="flex items-center gap-2 w-full">
-                <i data-lucide="pie-chart"></i>
-                <div class="text-sm font-medium">Profit Factor</div>
-              </div>
-              <div id="profitFactor" class="text-xl font-semibold"></div>
-            </div>
-            <p class="text-[13px] text-gray-500" id="dayTradeAverage"></p>
-          </div>
-        </div>
-      </div>
-      <!-- End Profit vs Loss -->
-
-      <!-- Now Status -->
-      <div class="col-span-4 2xl:col-span-2 bg-white rounded-2xl shadow p-6">
-        <div class="card-header">
-          <h2 class="text-xl font-semibold">Now Status</h2>
-        </div>
-        <div class="mt-5">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10 mb-20">
-            <div class="h-64">
-              <h3 class="text-base font-semibold mb-2">Balance Range</h3>
-              <canvas
-                id="balanceRangeChart"
-                height="250"
-                class="w-full h-full"
-              ></canvas>
-            </div>
-            <div class="h-64">
-              <h3 class="text-base font-semibold mb-2">Account Overview</h3>
-              <canvas
-                id="accountOverviewChart"
-                height="250"
-                class="w-full h-full"
-              ></canvas>
-            </div>
-          </div>
-          <div
-            id="statsContainer"
-            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10"
-          ></div>
-        </div>
-      </div>
-      <!-- End Now Status -->
-
-      <!-- Positions & Orders -->
-      <div class="rounded-2xl shadow p-6 bg-white col-span-4">
-        <div class="card-header">
-          <h2 class="text-lg font-semibold">Positions & Orders</h2>
-        </div>
-        <div class="relative overflow-auto mt-5 scrollbar max-h-[466.6px]">
-          <table class="w-full text-xs text-left text-black">
-            <thead class="text-[13px] text-black uppercase bg-gray-50">
-              <tr>
-                <th scope="col" class="px-6 py-4 rounded-s-lg">Ticket</th>
-                <th scope="col" class="px-6 py-4">Symbol</th>
-                <th scope="col" class="px-6 py-4">Time</th>
-                <th scope="col" class="px-6 py-4">Type</th>
-                <th scope="col" class="px-6 py-4">Volume</th>
-                <th scope="col" class="px-6 py-4">Open Price</th>
-                <th scope="col" class="px-6 py-4">S / L</th>
-                <th scope="col" class="px-6 py-4">T / P</th>
-                <th scope="col" class="px-6 py-4">Price</th>
-                <th scope="col" class="px-6 py-4">Swap</th>
-                <th scope="col" class="px-6 py-4">Profit</th>
-                <th scope="col" class="px-6 py-4 rounded-e-lg">Reason</th>
-              </tr>
-            </thead>
-            <tbody id="positions-orders-table-body"></tbody>
-          </table>
-        </div>
-      </div>
-      <!-- End Positions & Orders -->
-
-      <!-- Chart Drawdown -->
-      <div
-        id="chart-container"
-        class="col-span-4 rounded-2xl shadow bg-white p-6"
-      >
-        <h2 class="text-lg font-semibold mb-4">Chart Drawdown</h2>
-        <div
-          id="chart-drawdown-loading"
-          class="flex items-center justify-center w-full h-[300px] lg:h-[300px] xl:h-[450px] w-full hidden"
-        >
-          <svg
-            aria-hidden="true"
-            class="w-10 h-10 text-gray-200 animate-spin fill-blue-600"
-            viewBox="0 0 100 101"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-              fill="currentColor"
-            />
-            <path
-              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-              fill="currentFill"
-            />
-          </svg>
-        </div>
-
-        <canvas
-          id="chart-drawdown"
-          class="h-[450px] w-full max-h-[500px]"
-        ></canvas>
-      </div>
-      <!-- End Chart Drawdown -->
     </div>
     <!-- End Analyze Tab Content -->
 
@@ -1789,18 +1618,6 @@
             renderTradimgMethodsChart(CountTrade);
             // End Display Trading Methods
 
-            // Display Now Status
-            renderNowStatus(NowStatus);
-            // End Display Now Status
-
-            // Display Profit vs Loss
-            renderProfitVsLoss(CountTrade);
-            renderProfitVsLossChart(CountTrade);
-            // End Display Profit vs Loss
-
-            // Display Positions & Orders Table
-            renderPositionsOrdersTable(Positions, Orders);
-            // End Display Positions & Orders Table
           })
           .catch((error) => {
             $("#analyze").addClass("hidden");
@@ -1854,9 +1671,7 @@
             });
             // End Display Max Drawdown
 
-            // Display Chart Drawdown
-            renderChartDrawdown(ChartDrawdown);
-            // End Display Chart Drawdown
+            
           })
           .catch((error) => {
             $("#analyze").addClass("hidden");
