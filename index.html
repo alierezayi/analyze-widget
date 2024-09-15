@@ -20,44 +20,103 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Includes Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      .scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      .scrollbar::-webkit-scrollbar-track {
+        background: #e5e7eb;
+      }
+
+      .scrollbar::-webkit-scrollbar-thumb {
+        background: #9ca3af;
+        border-radius: 6px;
+      }
+
+      .scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #6b7280;
+      }
+    </style>
   </head>
-  <body>
-    <!-- Tabs -->
-    <div class="border-b border-gray-200 px-3">
-      <ul
-        class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 dark:text-gray-400 py-2"
+  <body class="scrollbar">
+    <!-- Header -->
+    <div class="border-b border-gray-200 px-3 h-[60px] flex items-center">
+      <!-- Tabs -->
+      <div
+        class="flex flex-wrap -mb-px text-sm font-medium text-center text-gray-500 p-1 w-fit rounded-xl bg-gray-100"
         id="tabs"
       >
-        <li class="me-2">
-          <button
-            class="main-tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 group"
-            id="analyze-tab"
-          >
-            <i data-lucide="chart-spline" class="w-4 h-4"></i>
-            Analyze
-          </button>
-        </li>
-        <li class="me-2">
-          <button
-            class="main-tab-button inline-flex gap-1 items-center justify-center px-4 py-3.5 group"
-            id="history-tab"
-          >
-            <i data-lucide="history" class="w-4 h-4"></i>
-            History Positions
-          </button>
-        </li>
-      </ul>
+        <button
+          class="main-tab-button inline-flex gap-1 items-center justify-center px-4 py-2.5 group w-[160px]"
+          id="analyze-tab"
+        >
+          <i data-lucide="chart-spline" class="w-4 h-4"></i>
+          Analyze
+        </button>
+
+        <button
+          class="main-tab-button inline-flex gap-1 items-center justify-center px-4 py-2.5 group w-[160px]"
+          id="history-tab"
+        >
+          <i data-lucide="history" class="w-4 h-4"></i>
+          History Positions
+        </button>
+      </div>
+      <!-- End Tabs -->
     </div>
-    <!-- End Tabs -->
+    <!-- End Header -->
 
     <!-- Analyze Tab Content -->
-    <!-- <div id="analyze-loading" class="px-3">Loading ...</div> -->
+    <div
+      id="analyze-loading"
+      class="px-3 flex items-center justify-center gap-2 text-lg text-blue-600 h-[calc(100vh-60px)]"
+    >
+      <div
+        role="status"
+        class="flex flex-col justify-center items-center gap-2"
+      >
+        <svg
+          aria-hidden="true"
+          class="w-10 h-10 text-gray-200 animate-spin fill-blue-600"
+          viewBox="0 0 100 101"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+            fill="currentColor"
+          />
+          <path
+            d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+            fill="currentFill"
+          />
+        </svg>
+        <span>Loading...</span>
+      </div>
+    </div>
+    <div
+      id="analyze-error"
+      class="h-[calc(100vh-60px)] flex justify-center items-center"
+    >
+      <div
+        class="flex items-center gap-2 p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 w-full max-w-xs"
+        role="alert"
+      >
+        <i data-lucide="circle-alert" class="w-4 h-4"></i>
+        <div id="analyze-error-message">
+          <!-- Analyze Error -->
+        </div>
+      </div>
+    </div>
     <div
       id="analyze"
-      class="tab-content p-3 hidden grid grid-cols-4 gap-x-3 gap-y-3 bg-gray-100"
+      class="tab-content p-3 grid grid-cols-4 gap-x-3 gap-y-3 bg-gray-100"
     >
       <!-- Summary Stats -->
-      <div class="summary-card rounded-xl shadow bg-white p-5 col-span-4">
+      <div class="summary-card rounded-xl col-span-4">
         <div
           class="summary-card-content grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-x-3 gap-y-10 col-span-4"
         >
@@ -67,7 +126,7 @@
       <!-- End Summary Stats -->
 
       <!-- Summary Chart -->
-      <div class="rounded-2xl shadow bg-white p-6 col-span-4 md:col-span-2">
+      <div class="rounded-2xl shadow bg-white p-6 col-span-4 lg:col-span-2">
         <div class="text-lg font-semibold mb-4">Financial Overview</div>
         <div class="w-full h-[260px]">
           <canvas id="summaryChart"></canvas>
@@ -76,47 +135,317 @@
       <!-- End Summary Chart -->
 
       <!-- Prop Analyze -->
-      <div class="rounded-2xl col-span-4 md:col-span-2">
-        <!-- <h2 class="text-lg font-semibold mb-6">Prop Analyze</h2> -->
-        <div class="grid lg:grid-cols-2 gap-3" id="prop-analyze-content">
-          <!-- Render Prop Analyze Items -->
-        </div>
+      <div
+        id="prop-analyze-content"
+        class="rounded-2xl col-span-4 lg:col-span-2 grid md:grid-cols-2 gap-3"
+      >
+        <!-- Render Prop Analyze Items -->
       </div>
       <!-- End Prop Analyze -->
 
       <!-- Max Drawdown Items -->
-      <!-- <div
+      <div
         id="max-drawdown-loading"
         class="w-full h-[200px] grid lg:grid-cols-2 gap-3 2xl:grid-cols-4 col-span-4"
       >
         <div
           class="rounded-2xl bg-white shadow flex justify-center items-center"
         >
-          Loading ...
+          <svg
+            aria-hidden="true"
+            class="w-10 h-10 text-gray-200 animate-spin fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
         </div>
         <div
           class="rounded-2xl bg-white shadow flex justify-center items-center"
         >
-          Loading ...
+          <svg
+            aria-hidden="true"
+            class="w-10 h-10 text-gray-200 animate-spin fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
         </div>
         <div
           class="rounded-2xl bg-white shadow flex justify-center items-center"
         >
-          Loading ...
+          <svg
+            aria-hidden="true"
+            class="w-10 h-10 text-gray-200 animate-spin fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
         </div>
         <div
           class="rounded-2xl bg-white shadow flex justify-center items-center"
         >
-          Loading ...
+          <svg
+            aria-hidden="true"
+            class="w-10 h-10 text-gray-200 animate-spin fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
         </div>
-      </div> -->
+      </div>
       <div
         id="max-drawdown-content"
-        class="w-full grid lg:grid-cols-2 gap-3 2xl:grid-cols-4 col-span-4"
+        class="w-full grid md:grid-cols-2 gap-3 2xl:grid-cols-4 col-span-4"
       >
         <!-- Render Max Drawdown -->
       </div>
       <!-- End Max Drawdown Items -->
+
+      <!-- History Charts -->
+      <div class="card col-span-4 p-5 rounded-2xl bg-white shadow">
+        <div class="card-header flex md:flex-row justify-between gap-y-5">
+          <div class="text-lg font-medium flex items-center gap-2">
+            Balance & Growth
+          </div>
+          <div class="tabs-list w-fit p-1 rounded-xl bg-gray-100">
+            <button
+              class="history-tabs-button px-3 py-1.5 text-gray-500 text-sm font-medium"
+              id="balance-tab"
+            >
+              Balance
+            </button>
+            <button
+              class="history-tabs-button px-3 py-1.5 text-gray-500 text-sm font-medium"
+              id="growth-tab"
+            >
+              Growth
+            </button>
+          </div>
+        </div>
+        <div id="history-charts-content">
+          <div id="balance">
+            <canvas
+              id="balanceChart"
+              class="h-[350px] h-[450px] max-h-[550px]"
+            ></canvas>
+          </div>
+          <div id="growth">
+            <canvas
+              id="growthChart"
+              class="h-[350px] h-[450px] max-h-[550px]"
+            ></canvas>
+          </div>
+        </div>
+      </div>
+      <!-- End History Charts -->
+
+      <!-- Tradeing Methods -->
+      <div
+        class="col-span-4 md:col-span-2 2xl:col-span-1 bg-white rounded-2xl shadow p-6"
+      >
+        <div class="text-lg font-semibold mb-4">Trading Methods</div>
+        <div class="flex flex-col items-center">
+          <canvas
+            id="tradingMethodsChart"
+            class="aspect-square min-w-[100px] max-h-[300px] max-w-[300px] -mt-3"
+          ></canvas>
+          <div
+            class="grid grid-cols-2 w-full gap-x-0 gap-y-10 mt-3 flex-1"
+            id="tradingMethodsInfoCards"
+          >
+            <!-- Info cards will be dynamically generated here -->
+          </div>
+        </div>
+      </div>
+      <!-- End Tradeing Methods -->
+
+      <!-- Profit vs Loss -->
+      <div
+        class="col-span-4 md:col-span-2 2xl:col-span-1 bg-white rounded-2xl shadow p-6"
+      >
+        <div class="text-lg font-semibold mb-4">Profit vs Loss</div>
+        <canvas
+          id="countTradeRadialChart"
+          class="aspect-square min-w-[100px] max-w-[200px] max-h-[200px] mx-auto mb-12"
+        ></canvas>
+        <div class="flex justify-center items-center w-full gap-7">
+          <div class="flex flex-col items-center">
+            <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
+            <div class="text-2xl font-semibold" id="profitPercentage">
+              <!-- Profit Percent -->
+            </div>
+            <div class="text-sm text-muted-foreground" id="profitCount">
+              <!-- Profit -->
+            </div>
+          </div>
+          <div class="text-base font-semibold">vs</div>
+          <div class="flex flex-col items-center">
+            <i data-lucide="trending-down" class="w-5 h-5 text-red-500"></i>
+            <div class="text-2xl font-semibold" id="lossPercentage">
+              <!-- Loss Percent -->
+            </div>
+            <div class="text-sm text-muted-foreground" id="lossCount">
+              <!-- Loss -->
+            </div>
+          </div>
+        </div>
+        <hr class="mt-10 mb-5 border-gray-200" />
+        <div class="w-full flex flex-col gap-4">
+          <div>
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-2 w-full">
+                <i data-lucide="bar-chart"></i>
+                <div class="text-sm font-medium">Total Trades</div>
+              </div>
+              <div id="totalTrades" class="text-xl font-semibold"></div>
+            </div>
+            <p class="text-[13px] text-gray-500">Total trades analyzed</p>
+          </div>
+          <div>
+            <div class="flex justify-between items-center mt-4">
+              <div class="flex items-center gap-2 w-full">
+                <i data-lucide="pie-chart"></i>
+                <div class="text-sm font-medium">Profit Factor</div>
+              </div>
+              <div id="profitFactor" class="text-xl font-semibold"></div>
+            </div>
+            <p class="text-[13px] text-gray-500" id="dayTradeAverage"></p>
+          </div>
+        </div>
+      </div>
+      <!-- End Profit vs Loss -->
+
+      <!-- Now Status -->
+      <div class="col-span-4 2xl:col-span-2 bg-white rounded-2xl shadow p-6">
+        <div class="card-header">
+          <h2 class="text-xl font-semibold">Now Status</h2>
+        </div>
+        <div class="mt-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-10 mb-20">
+            <div class="h-64">
+              <h3 class="text-base font-semibold mb-2">Balance Range</h3>
+              <canvas
+                id="balanceRangeChart"
+                height="250"
+                class="w-full h-full"
+              ></canvas>
+            </div>
+            <div class="h-64">
+              <h3 class="text-base font-semibold mb-2">Account Overview</h3>
+              <canvas
+                id="accountOverviewChart"
+                height="250"
+                class="w-full h-full"
+              ></canvas>
+            </div>
+          </div>
+          <div
+            id="statsContainer"
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10"
+          ></div>
+        </div>
+      </div>
+      <!-- End Now Status -->
+
+      <!-- Positions & Orders -->
+      <div class="rounded-2xl shadow p-6 bg-white col-span-4">
+        <div class="card-header">
+          <h2 class="text-lg font-semibold">Positions & Orders</h2>
+        </div>
+        <div class="relative overflow-auto mt-5 scrollbar max-h-[466.6px]">
+          <table class="w-full text-xs text-left text-black">
+            <thead class="text-[13px] text-black uppercase bg-gray-50">
+              <tr>
+                <th scope="col" class="px-6 py-4 rounded-s-lg">Ticket</th>
+                <th scope="col" class="px-6 py-4">Symbol</th>
+                <th scope="col" class="px-6 py-4">Time</th>
+                <th scope="col" class="px-6 py-4">Type</th>
+                <th scope="col" class="px-6 py-4">Volume</th>
+                <th scope="col" class="px-6 py-4">Open Price</th>
+                <th scope="col" class="px-6 py-4">S / L</th>
+                <th scope="col" class="px-6 py-4">T / P</th>
+                <th scope="col" class="px-6 py-4">Price</th>
+                <th scope="col" class="px-6 py-4">Swap</th>
+                <th scope="col" class="px-6 py-4">Profit</th>
+                <th scope="col" class="px-6 py-4 rounded-e-lg">Reason</th>
+              </tr>
+            </thead>
+            <tbody id="positions-orders-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- End Positions & Orders -->
+
+      <!-- Chart Drawdown -->
+      <div
+        id="chart-container"
+        class="col-span-4 rounded-2xl shadow bg-white p-6"
+      >
+        <h2 class="text-lg font-semibold mb-4">Chart Drawdown</h2>
+        <div
+          id="chart-drawdown-loading"
+          class="flex items-center justify-center w-full h-[300px] lg:h-[300px] xl:h-[450px] w-full hidden"
+        >
+          <svg
+            aria-hidden="true"
+            class="w-10 h-10 text-gray-200 animate-spin fill-blue-600"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+              fill="currentColor"
+            />
+            <path
+              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+              fill="currentFill"
+            />
+          </svg>
+        </div>
+
+        <canvas
+          id="chart-drawdown"
+          class="h-[450px] w-full max-h-[500px]"
+        ></canvas>
+      </div>
+      <!-- End Chart Drawdown -->
     </div>
     <!-- End Analyze Tab Content -->
 
@@ -165,29 +494,25 @@
     <script>
       lucide.createIcons();
 
-      // Fetching Data
-      async function fetchData(url) {
-        try {
-          const response = await fetch(url, {
-            headers: {
-              APIKey:
-                "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20",
-            },
-          });
+      // Fetching Analyze Data
+      function fetchAnalyzeData(login) {
+        const url = `https://socket.unfxco.com/mt5/api/analyze/basic?login=${login}`;
+        const APIKey =
+          "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20";
 
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          console.log(response);
-
-          return data;
-        } catch (error) {
-          console.error("There was a problem with the fetch operation:", error);
-          return null;
-        }
+        return fetch(url, { headers: { APIKey } });
       }
-      // End Fetching Data
+      // End Fetching Analyze Data
+
+      // Fetching Drawdown Data
+      function fetchDrawdownData(login) {
+        const url = `https://socket.unfxco.com/mt5/api/analyze/drawdown/chart?login=${login}`;
+        const APIKey =
+          "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20";
+
+        return fetch(url, { headers: { APIKey } });
+      }
+      // End Fetching Drawdown Data
 
       // Summary Stats Functionality
       function formatValue(value) {
@@ -206,19 +531,21 @@
             : '<i data-lucide="trending-down" class="text-red-500 w-4 h-4"></i>';
 
         return `
-              <div>
-                <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
-                  <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
-                  <div class="text-sm font-medium">${title}</div>
-                </div>
-                <div>
-                  <div class="text-xl font-semibold">${formatValue(value)}</div>
-                  <p class="text-xs text-muted-foreground flex gap-1">
-                    ${trendIcon} ${Math.abs(value).toFixed(2)}
-                  </p>
-                </div>
-              </div>
-            `;
+                    <div class="border shadow-sm bg-white rounded-lg px-3 py-4">
+                      <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
+                        <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
+                        <div class="text-sm font-medium">${title}</div>
+                      </div>
+                      <div>
+                        <div class="text-xl font-semibold">${formatValue(
+                          value
+                        )}</div>
+                        <p class="text-xs text-muted-foreground flex gap-1">
+                          ${trendIcon} ${Math.abs(value).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  `;
       }
 
       function renderSumStats(data) {
@@ -325,6 +652,7 @@
               },
             },
             plugins: {
+              legend: { display: false },
               tooltip: {
                 callbacks: {
                   label: function (context) {
@@ -389,23 +717,23 @@
             .toLowerCase()}`;
 
           const html = `
-                <div class="space-y-4 shadow bg-white rounded-2xl p-6">
-                  <div class="flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
-                      <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
-                      <span class="text-base font-semibold">${item.label}</span>
-                    </div>
-                    ${statusBadge}
-                  </div>
-                  <div class="flex items-center space-x-4">
-                    <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
-                    <div>
-                      <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
-                      <p class="text-sm text-gray-400">Progress</p>
-                    </div>
-                  </div>
-                </div>
-              `;
+                      <div class="space-y-4 shadow bg-white rounded-2xl p-6">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center space-x-2">
+                            <i data-lucide="${item.icon}" class="w-5 h-5 ${item.iconColor}"></i>
+                            <span class="text-base font-semibold">${item.label}</span>
+                          </div>
+                          ${statusBadge}
+                        </div>
+                        <div class="flex items-center space-x-4">
+                          <div><canvas id="${chartId}" width="80" height="80"></canvas></div>
+                          <div>
+                            <p class="text-xl font-semibold">${item.value} ${item.unit}</p>
+                            <p class="text-sm text-gray-400">Progress</p>
+                          </div>
+                        </div>
+                      </div>
+                    `;
 
           $("#prop-analyze-content").append(html);
 
@@ -512,38 +840,38 @@
           const date = new Date(time);
 
           const html = `
-                          <div class="overflow-hidden rounded-2xl shadow bg-white p-4">
-                            <div class="flex flex-row justify-between items-center pb-4">
-                              <h2 class="text-base font-medium">${title} balance max drawdown</h2>
-                            </div>
-                            <div class="">
-                              <div class="flex items-center justify-between mb-2">
-                                <span class="text-2xl font-semibold drawdown-value">
-                                  ${value.toFixed(2)}%
-                                </span>
-                                ${badge}
-                              </div>
-                              ${progress}
-                              <div class="flex justify-between text-xs text-gray-500 mt-1">
-                                <span>${0}%</span>
-                                <span>${max}%</span>
-                              </div>
-                              <div
-                                class="flex items-center justify-between mt-2 text-xs text-gray-500"
-                              >
-                                <span>${value.toFixed(2)}% drawdown</span>
-                                <span>${date.toLocaleString()}</span>
-                              </div>
-                              <div class="flex items-center justify-center mt-2">
-                                ${
-                                  value < max
-                                    ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
-                                    : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
-                                }
-                              </div>
-                            </div>
-                          </div>
-                        `;
+                                <div class="overflow-hidden rounded-2xl shadow bg-white p-4">
+                                  <div class="flex flex-row justify-between items-center pb-4">
+                                    <h2 class="text-base font-medium">${title} balance max drawdown</h2>
+                                  </div>
+                                  <div class="">
+                                    <div class="flex items-center justify-between mb-2">
+                                      <span class="text-2xl font-semibold drawdown-value">
+                                        ${value.toFixed(2)}%
+                                      </span>
+                                      ${badge}
+                                    </div>
+                                    ${progress}
+                                    <div class="flex justify-between text-xs text-gray-500 mt-1">
+                                      <span>${0}%</span>
+                                      <span>${max}%</span>
+                                    </div>
+                                    <div
+                                      class="flex items-center justify-between mt-2 text-xs text-gray-500"
+                                    >
+                                      <span>${value.toFixed(2)}% drawdown</span>
+                                      <span>${date.toLocaleString()}</span>
+                                    </div>
+                                    <div class="flex items-center justify-center mt-2">
+                                      ${
+                                        value < max
+                                          ? "<i data-lucide='check-circle-2' class='text-blue-500'></i>"
+                                          : "<i data-lucide='alert-circle' class='text-rose-500'></i>"
+                                      }
+                                    </div>
+                                  </div>
+                                </div>
+                              `;
 
           $("#max-drawdown-content").append(html);
 
@@ -567,16 +895,18 @@
           const transform = `-${100 - value * (100 / max)}%`;
 
           return `
-                            <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
-                              <div
-                                class="h-full flex-1 transition-all transform ${
-                                  value < max ? "bg-blue-500" : "bg-rose-500"
-                                }"
-                                style="transform: translateX(${transform})"
-                              >
-                              </div>
-                            </div>
-                          `;
+                                  <div class="relative h-3 w-full overflow-hidden rounded-full bg-gray-100">
+                                    <div
+                                      class="h-full flex-1 transition-all transform ${
+                                        value < max
+                                          ? "bg-blue-500"
+                                          : "bg-rose-500"
+                                      }"
+                                      style="transform: translateX(${transform})"
+                                    >
+                                    </div>
+                                  </div>
+                                `;
         }
       };
 
@@ -599,8 +929,6 @@
             $("#growth").addClass("hidden");
           }
           if (tabName === "growth") {
-            console.log("gro");
-
             $("#growth").removeClass("hidden");
             $("#balance").addClass("hidden");
           }
@@ -678,6 +1006,7 @@
                   display: false,
                 },
                 ticks: {
+                  maxTicksLimit: 20,
                   callback: function (value) {
                     return new Date(
                       this.getLabelForValue(value)
@@ -703,6 +1032,7 @@
               },
             },
             plugins: {
+              legend: { display: false },
               tooltip: {
                 callbacks: {
                   title: function (context) {
@@ -754,6 +1084,7 @@
                   display: false,
                 },
                 ticks: {
+                  maxTicksLimit: 20,
                   callback: function (value) {
                     return new Date(
                       this.getLabelForValue(value)
@@ -773,12 +1104,13 @@
                 ticks: {
                   count: 10,
                   callback: function (value) {
-                    return `$${value.toFixed(2)}`;
+                    return `${value.toFixed(2)}`;
                   },
                 },
               },
             },
             plugins: {
+              legend: { display: false },
               tooltip: {
                 callbacks: {
                   title: function (context) {
@@ -846,6 +1178,7 @@
                 },
               },
               plugins: {
+                legend: { display: false },
                 tooltip: {
                   callbacks: {
                     label: function (context) {
@@ -895,20 +1228,20 @@
 
         platformData.forEach((item) => {
           const cardHtml = `
-                <div class="rounded-lg flex flex-col items-center">
-                  <div class="flex items-center gap-1.5">
-                    <i data-lucide="${item.icon}" class="h-4 w-4 ${item.iconColor}"></i>
-                    <span class="font-medium">${item.label}</span>
-                  </div>
-                  <div class="mt-1 flex flex-col items-center">
-                    <p class="text-2xl font-semibold">${item.value}</p>
-                    <p class="text-xs text-gray-500">
-                      ${item.percent}
-                      <i data-lucide="percent" class="h-3 w-3 inline-block"></i> of total
-                    </p>
-                  </div>
-                </div>
-              `;
+                      <div class="rounded-lg flex flex-col items-center">
+                        <div class="flex items-center gap-1.5">
+                          <i data-lucide="${item.icon}" class="h-4 w-4 ${item.iconColor}"></i>
+                          <span class="font-medium">${item.label}</span>
+                        </div>
+                        <div class="mt-1 flex flex-col items-center">
+                          <p class="text-2xl font-semibold">${item.value}</p>
+                          <p class="text-xs text-gray-500">
+                            ${item.percent}
+                            <i data-lucide="percent" class="h-3 w-3 inline-block"></i> of total
+                          </p>
+                        </div>
+                      </div>
+                    `;
           $tradingMethodsInfoCards.append(cardHtml);
 
           lucide.createIcons();
@@ -948,6 +1281,7 @@
           },
           options: {
             plugins: {
+              legend: { display: false },
               tooltip: {
                 callbacks: {
                   label: function (context) {
@@ -1051,6 +1385,9 @@
           data: lineChartData,
           options: {
             responsive: true,
+            plugins: {
+              legend: { display: false },
+            },
             scales: {
               x: {
                 grid: {
@@ -1090,6 +1427,9 @@
           data: areaChartData,
           options: {
             responsive: true,
+            plugins: {
+              legend: { display: false },
+            },
             scales: {
               x: {
                 grid: {
@@ -1112,19 +1452,242 @@
 
         stats.forEach((stat) => {
           $("#statsContainer").append(`
-            <div class="flex items-center space-x-2">
-              <div>
-                <p class="text-sm text-muted-foreground flex items-center gap-2">
-                  <i data-lucide=${stat.icon} class="w-3.5 h-3.5 ${stat.color}"></i>
-                  <span class="truncate max-w-[120px]">${stat.label}</span>
-                </p>
-                <p class="text-lg font-semibold">${stat.value}</p>
-              </div>
-            </div>
-          `);
+                  <div class="flex items-center space-x-2">
+                    <div>
+                      <p class="text-sm text-muted-foreground flex items-center gap-2">
+                        <i data-lucide=${stat.icon} class="w-3.5 h-3.5 ${stat.color}"></i>
+                        <span class="truncate max-w-[120px]">${stat.label}</span>
+                      </p>
+                      <p class="text-lg font-semibold">${stat.value}</p>
+                    </div>
+                  </div>
+                `);
         });
+
+        lucide.createIcons();
       };
       // End Now Status
+
+      // Positions Table
+      const renderPositionsOrdersTable = (Positions, Orders) => {
+        const formattedDate = (dateString) => {
+          const date = new Date(dateString);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, "0");
+          const day = String(date.getDate()).padStart(2, "0");
+          const hours = String(date.getHours()).padStart(2, "0");
+          const minutes = String(date.getMinutes()).padStart(2, "0");
+          const seconds = String(date.getSeconds()).padStart(2, "0");
+          const milliseconds = String(date.getMilliseconds()).padStart(3, "0");
+
+          return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds}.${milliseconds}`;
+        };
+
+        function calculateTotal(data, key) {
+          return data.reduce((total, item) => total + (item[key] || 0), 0);
+        }
+
+        const totalRow = (name, data) => {
+          const totalNowPrice = calculateTotal(data, "NowPrice");
+          const totalSwap = calculateTotal(data, "Swap");
+          const totalProfit = calculateTotal(data, "Profit");
+          const totalReason = calculateTotal(data, "Reason");
+
+          const profitClass =
+            totalProfit > 0 ? "text-green-500" : "text-rose-500";
+          const profitIcon = totalProfit > 0 ? "trending-up" : "trending-down";
+
+          return `
+              <tr class="bg-gray-100 text-black text-sm">
+                <td class="px-6 py-4 rounded-es-xl">${name}</td>
+                <td colspan="7"></td>
+                <td class="px-6 py-4">$${totalNowPrice.toFixed(2)}</td>
+                <td class="px-6 py-4">${totalSwap.toFixed(2)}</td>
+                <td class="px-6 py-4 flex items-center gap-1 ${profitClass}">
+                  ${totalProfit.toFixed(2)}
+                  <i data-lucide="${profitIcon}" class="w-3.5 h-3.5"></i>
+                </td>
+                <td class="px-6 py-4 rounded-ee-xl">${totalReason.toFixed(
+                  2
+                )}</td>
+              </tr>
+            `;
+        };
+
+        const $tableBody = $("#positions-orders-table-body");
+        $tableBody.empty();
+
+        if (Positions.length && Orders.length) {
+          $tableBody.append(`
+            <tr>
+              <td colspan="12" class="text-center py-4">No data available</td>
+            </tr>
+          `);
+        } else {
+          Positions?.forEach((position) => {
+            const formattedOpenTime = formattedDate(position.OpenTime);
+            const profitClass =
+              position.Profit > 0 ? "text-green-500" : "text-rose-500";
+            const profitIcon =
+              position.Profit > 0 ? "trending-up" : "trending-down";
+
+            const row = `
+              <tr class="odd:bg-white even:bg-gray-50 border-b last:border-none">
+                <td class="px-6 py-4">${position.Ticket}</td>
+                <td class="px-6 py-4">${position.Symbol}</td>
+                <td class="px-6 py-4">${formattedOpenTime}</td>
+                <td class="px-6 py-4">${position.TypeString}</td>
+                <td class="px-6 py-4">${position.Volume}</td>
+                <td class="px-6 py-4">${position.OpenPrice}</td>
+                <td class="px-6 py-4">${position.StopLoss}</td>
+                <td class="px-6 py-4">${position.TakeProfit}</td>
+                <td class="px-6 py-4">$${position.NowPrice}</td>
+                <td class="px-6 py-4">${position.Swap}</td>
+                <td class="px-6 py-4 flex items-center gap-1 ${profitClass}">
+                  ${position.Profit}
+                  <i data-lucide="${profitIcon}" class="w-3.5 h-3.5"></i>
+                </td>
+                <td class="px-6 py-4">${position.Reason}</td>
+              </tr>
+            `;
+
+            $tableBody.append(row);
+          });
+
+          if (Positions.length) {
+            const totalPositionsRow = totalRow("Positions", Positions);
+            $tableBody.append(totalPositionsRow);
+          }
+
+          Orders?.forEach((order) => {
+            const formattedOpenTime = formattedDate(order.OpenTime);
+            const profitClass =
+              order.Profit > 0 ? "text-green-500" : "text-rose-500";
+            const profitIcon =
+              order.Profit > 0 ? "trending-up" : "trending-down";
+
+            const row = `
+              <tr class="odd:bg-white even:bg-gray-50 border-b last:border-none">
+                <td class="px-6 py-4">${order.Ticket}</td>
+                <td class="px-6 py-4">${order.Symbol}</td>
+                <td class="px-6 py-4">${formattedOpenTime}</td>
+                <td class="px-6 py-4">${order.TypeString}</td>
+                <td class="px-6 py-4">${order.Volume}</td>
+                <td class="px-6 py-4">${order.OpenPrice}</td>
+                <td class="px-6 py-4">${order.StopLoss}</td>
+                <td class="px-6 py-4">${order.TakeProfit}</td>
+                <td class="px-6 py-4">$${order.NowPrice}</td>
+                <td class="px-6 py-4">${order.Swap}</td>
+                <td class="px-6 py-4 flex items-center gap-1 ${profitClass}">
+                  ${order.Profit}
+                  <i data-lucide="${profitIcon}" class="w-3.5 h-3.5"></i>
+                </td>
+                <td class="px-6 py-4">${order.Reason}</td>
+              </tr>
+            `;
+
+            $tableBody.append(row);
+          });
+
+          if (Orders.length) {
+            const totalOrdersRow = totalRow("Orders", Orders);
+            $tableBody.append(totalOrdersRow);
+          }
+        }
+        lucide.createIcons();
+      };
+      // End Positions Table
+
+      // Chart Drawdown
+      function renderChartDrawdown(data) {
+        const labels = data.map((item) =>
+          new Date(item.Time).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+          })
+        );
+
+        const datasets = [
+          {
+            label: "Balance",
+            data: data.map((item) => item.Balance),
+            borderColor: "#eab308",
+          },
+          {
+            label: "Min Equity",
+            data: data.map((item) => item.MinEquity),
+            borderColor: "#ec4899",
+          },
+          {
+            label: "Max Equity",
+            data: data.map((item) => item.MaxEquity),
+            borderColor: "#3b82f6",
+          },
+          {
+            label: "Start Balance",
+            data: data.map((item) => item.StartBalance),
+            borderColor: "#22c55e",
+          },
+          {
+            label: "EOD Balance",
+            data: data.map((item) => item.EODBalance),
+            borderColor: "#a855f7",
+          },
+          {
+            label: "MAT Balance",
+            data: data.map((item) => item.MATBalance),
+            borderColor: "#14b8a6",
+          },
+          {
+            label: "MD Balance",
+            data: data.map((item) => item.MDBalance),
+            borderColor: "#f97316",
+          },
+        ];
+
+        const ctx = document.getElementById("chart-drawdown").getContext("2d");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: datasets.map((dataset) => ({
+              ...dataset,
+              tension: 0.1, // Smooth line curve
+              borderWidth: 2,
+              pointRadius: 0,
+            })),
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: true }, // Show the legend for labels
+            },
+            scales: {
+              x: {
+                type: "category",
+                grid: {
+                  display: false,
+                },
+                ticks: { maxTicksLimit: 20 },
+              },
+              y: {
+                beginAtZero: false,
+                grid: {
+                  color: "#e5e5e5",
+                  drawBorder: false,
+                },
+                ticks: {
+                  count: 10,
+                  callback: function (value) {
+                    return `${value.toFixed(2)}`;
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+      // End Chart Drawdown
 
       $(document).ready(async function () {
         // Tab switching logic
@@ -1144,7 +1707,7 @@
         const MainTabOptions = {
           defaultTabId: "analyze",
           activeClasses:
-            "text-blue-600 hover:text-blue-600 rounded-lg bg-slate-100 border-none",
+            "text-blue-600 hover:text-blue-600 rounded-lg bg-white border-none shadow",
           inactiveClasses: "text-gray-500 hover:text-gray-600",
           onShow: () => {
             console.log("tab is shown");
@@ -1177,91 +1740,130 @@
         // End Tabs Switching
 
         // Fetching Analyze Data
-        const login = 115211;
+        const login = 799945;
 
-        const analyzeUrl = `https://socket.unfxco.com/mt5/api/analyze/basic?login=${login}`;
-        const analyzeData = await fetchData(analyzeUrl);
-        // const drawdownUrl = `https://socket.unfxco.com/mt5/api/analyze/drawdown/chart?login=${login}`;
-        // const drawdownData = await fetchData(drawdownUrl);
+        $("#analyze-loading").removeClass("hidden");
+        $("#analyze-error").addClass("hidden");
+        $("#analyze").addClass("hidden");
 
-        console.log(analyzeData);
-        // console.log(drawdownData);
+        fetchAnalyzeData(login)
+          .then((res) => res.json())
+          .then((data) => {
+            $("#analyze-loading").addClass("hidden");
+            $("#analyze").removeClass("hidden");
 
-        const {
-          Summary,
-          PropAnalyze,
-          NowStatus,
-          HistoryBalance,
-          HistoryGrowth,
-          CountTrade,
-        } = analyzeData;
+            console.log(data);
 
-        const { LimitVolume, ...res } = PropAnalyze;
-        const newPropAnalyze = {
-          ...res,
-          RelativeDrawdown: NowStatus.RelativeDrawdown,
-        };
+            const {
+              Summary,
+              PropAnalyze,
+              NowStatus,
+              HistoryBalance,
+              HistoryGrowth,
+              CountTrade,
+              Positions,
+              Orders,
+            } = data;
 
-        // const {
-        //   MaxAllTimeBalanceDrawdown,
-        //   MaxAllTimeBalanceDrawdownTime,
-        //   MaxDayBalanceDrawdown,
-        //   MaxDayBalanceDrawdownTime,
-        //   MaxEODBalanceDrawdown,
-        //   MaxEODBalanceDrawdownTime,
-        //   MaxFloatingDrawdown,
-        //   MaxFloatingDrawdownTime,
-        //   MaxStartBalanceDrawdown,
-        //   MaxStartBalanceDrawdownTime,
-        // } = drawdownData;
+            const { LimitVolume, ...res } = PropAnalyze;
+            const newPropAnalyze = {
+              ...res,
+              RelativeDrawdown: NowStatus.RelativeDrawdown,
+            };
 
+            // Display Summary
+            renderSumStats(Summary);
+            renderSumChart(Summary);
+            // End Display Summary
+
+            // Display Prop Analyze
+            renderPropAnalyze(newPropAnalyze);
+            // End Display Prop Analyze
+
+            // Display History Charts
+            renderHistoryCharts(HistoryBalance, HistoryGrowth);
+            // End Display History Charts
+
+            // Display Trading Methods
+            renderTradingMethods(CountTrade);
+            renderTradimgMethodsChart(CountTrade);
+            // End Display Trading Methods
+
+            // Display Now Status
+            renderNowStatus(NowStatus);
+            // End Display Now Status
+
+            // Display Profit vs Loss
+            renderProfitVsLoss(CountTrade);
+            renderProfitVsLossChart(CountTrade);
+            // End Display Profit vs Loss
+
+            // Display Positions & Orders Table
+            renderPositionsOrdersTable(Positions, Orders);
+            // End Display Positions & Orders Table
+          })
+          .catch((error) => {
+            $("#analyze").addClass("hidden");
+            $("#analyze-loading").addClass("hidden");
+            $("#analyze-error").removeClass("hidden");
+            $("#analyze-error-message").text(error.message);
+          });
         // End Fetching Analyze Data
 
-        renderSumStats(Summary);
-        renderSumChart(Summary);
-        // End Display Summary
+        // Fetching Drawdown Data
+        $("#max-drawdown-loading").removeClass("hidden");
+        $("#chart-drawdown-loading").removeClass("hidden");
+        $("#max-drawdown-content").addClass("hidden");
+        $("#analyze-error").addClass("hidden");
 
-        // Display Prop Analyze
-        renderPropAnalyze(newPropAnalyze);
-        // End Display Prop Analyze
+        fetchDrawdownData(login)
+          .then((res) => res.json())
+          .then((data) => {
+            $("#max-drawdown-loading").addClass("hidden");
+            $("#chart-drawdown-loading").addClass("hidden");
+            $("#max-drawdown-content").removeClass("hidden");
 
-        // Display Now Status
-        renderNowStatus(NowStatus);
-        // End Display Now Status
+            const {
+              MaxAllTimeBalanceDrawdown,
+              MaxAllTimeBalanceDrawdownTime,
+              MaxDayBalanceDrawdown,
+              MaxDayBalanceDrawdownTime,
+              MaxEODBalanceDrawdown,
+              MaxEODBalanceDrawdownTime,
+              MaxFloatingDrawdown,
+              MaxFloatingDrawdownTime,
+              MaxStartBalanceDrawdown,
+              MaxStartBalanceDrawdownTime,
+              ChartDrawdown,
+              ShowChartDrawdown,
+            } = data;
 
-        // Display Max Drawdown
-        // const maxDrawdown = {
-        //   MaxAllTimeBalanceDrawdown,
-        //   MaxAllTimeBalanceDrawdownTime,
-        //   MaxDayBalanceDrawdown,
-        //   MaxDayBalanceDrawdownTime,
-        //   MaxEODBalanceDrawdown,
-        //   MaxEODBalanceDrawdownTime,
-        //   MaxFloatingDrawdown,
-        //   MaxFloatingDrawdownTime,
-        //   MaxStartBalanceDrawdown,
-        //   MaxStartBalanceDrawdownTime,
-        // };
+            // Display Max Drawdown
+            renderMaxDrawdown({
+              ...ShowChartDrawdown,
+              MaxAllTimeBalanceDrawdown,
+              MaxAllTimeBalanceDrawdownTime,
+              MaxDayBalanceDrawdown,
+              MaxDayBalanceDrawdownTime,
+              MaxEODBalanceDrawdown,
+              MaxEODBalanceDrawdownTime,
+              MaxFloatingDrawdown,
+              MaxFloatingDrawdownTime,
+              MaxStartBalanceDrawdown,
+              MaxStartBalanceDrawdownTime,
+            });
+            // End Display Max Drawdown
 
-        // renderMaxDrawdown({
-        //   ...drawdownData.ShowChartDrawdown,
-        //   ...maxDrawdown,
-        // });
-        // End Display Max Drawdown
-
-        // Display History Charts
-        renderHistoryCharts(HistoryBalance, HistoryGrowth);
-        // End Display History Charts
-
-        // Display Trading Methods
-        renderTradingMethods(CountTrade);
-        renderTradimgMethodsChart(CountTrade);
-        // End Display Trading Methods
-
-        // Display Profit vs Loss
-        renderProfitVsLoss(CountTrade);
-        renderProfitVsLossChart(CountTrade);
-        // End Display Profit vs Loss
+            // Display Chart Drawdown
+            renderChartDrawdown(ChartDrawdown);
+            // End Display Chart Drawdown
+          })
+          .catch((error) => {
+            $("#analyze").addClass("hidden");
+            $("#analyze-error").removeClass("hidden");
+            $("#analyze-error-message").text(error.message);
+          });
+        // End Fetching Drawdown Data
 
         // Initialize DataTables
         $("#salesTable").DataTable();
