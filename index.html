@@ -46,6 +46,7 @@
         border-radius: 0.375rem; /* Tailwind rounded-md */
         background-color: white; /* Tailwind Gray-100 */
         margin-left: 0.5rem;
+        margin-bottom: 1rem;
         width: 300px; /* Adjust width if needed */
       }
 
@@ -59,19 +60,21 @@
         margin: 0 0.25rem;
         color: #1f2937; /* Tailwind Gray-800 */
         border: 1px solid #d1d5db; /* Tailwind Gray-300 */
-        border-radius: 0.375rem; /* Tailwind rounded-md */
+        border-radius: 0.25rem; /* Tailwind rounded-md */
         background-color: #ffffff; /* Tailwind white */
         text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
       }
 
       .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-        background-color: #e5e7eb; /* Tailwind Gray-200 */
+        /* background-color: #f1f5f9 !important; */
       }
 
       .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-        background-color: #3b82f6; /* Tailwind Blue-500 */
-        color: #ffffff; /* White text for active page */
-        border-color: #3b82f6;
+        background-color: #64748b; /* Tailwind Blue-500 */
+        color: #ffffff !important; 
+        border-color: #e2e8f0;
       }
 
       .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
@@ -99,14 +102,14 @@
         font-size: 0.875rem; /* Tailwind text-sm */
       }
 
-      .dataTables_wrapper th {
-        background-color: #f3f4f6; /* Tailwind Gray-50 */
-        color: #374151; /* Tailwind Gray-700 */
+      /* .dataTables_wrapper th {
+        background-color: #f3f4f6; 
+        color: #374151;
         font-weight: 600;
         text-align: left;
         padding: 0.75rem;
-        border-bottom: 1px solid #d1d5db; /* Tailwind Gray-300 */
-      }
+        border-bottom: 1px solid #d1d5db; 
+      } */
 
       .dataTables_processing {
         padding: 1rem;
@@ -117,23 +120,23 @@
         border-radius: 0.375rem; /* Tailwind rounded-md */
       }
 
-      .dataTables_wrapper tbody tr:hover {
-        background-color: #f3f4f6; /* Tailwind Gray-50 */
-      }
+      /* .dataTables_wrapper tbody tr:hover {
+        background-color: #f3f4f6; 
+      } */
 
       .dataTables_wrapper tbody td {
         padding: 0.75rem;
         border-bottom: 1px solid #e5e7eb; /* Tailwind Gray-200 */
-        color: #4b5563; /* Tailwind Gray-700 */
+        /* color: #4b5563;  */
       }
 
-      .dataTables_wrapper thead th {
+      /* .dataTables_wrapper thead th {
         padding: 0.75rem;
-        border-bottom: 2px solid #d1d5db; /* Tailwind Gray-300 */
+        border-bottom: 2px solid #d1d5db;
         font-weight: 600;
         text-align: left;
-        color: #374151; /* Tailwind Gray-700 */
-      }
+        color: #374151; 
+      } */
     </style>
   </head>
   <body class="scrollbar">
@@ -334,7 +337,7 @@
 
       <!-- History Charts -->
       <div class="card col-span-4 p-5 rounded-2xl bg-white shadow">
-        <div class="card-header flex md:flex-row justify-between gap-y-5">
+        <div class="card-header flex md:flex-row justify-between gap-y-5 mb-5">
           <div class="text-lg font-medium flex items-center gap-2">
             Balance & Growth
           </div>
@@ -395,10 +398,17 @@
         class="col-span-4 md:col-span-2 2xl:col-span-1 bg-white rounded-2xl shadow p-6"
       >
         <div class="text-lg font-semibold mb-4">Profit vs Loss</div>
-        <canvas
-          id="countTradeRadialChart"
-          class="aspect-square min-w-[100px] max-w-[200px] max-h-[200px] mx-auto mb-12"
-        ></canvas>
+        <div
+          class="relative min-w-[100px] w-full max-w-[250px] md:max-w-[300px] 2xl:max-w-[250px] max-h-[230px] mx-auto"
+        >
+          <div
+            class="absolute inset-x-0 bottom-14 flex flex-col justify-center items-center"
+          >
+            <div class="text-2xl font-bold" id="count-all-trades"></div>
+            <div class="texs-sm text-gray-500">All Profit and Loss</div>
+          </div>
+          <canvas id="countTradeRadialChart" class="w-full h-full"></canvas>
+        </div>
         <div class="flex justify-center items-center w-full gap-7">
           <div class="flex flex-col items-center">
             <i data-lucide="trending-up" class="w-5 h-5 text-blue-500"></i>
@@ -485,7 +495,7 @@
         </div>
         <div class="relative overflow-auto mt-5 scrollbar max-h-[466.6px]">
           <table class="w-full text-xs text-left text-black">
-            <thead class="text-[13px] text-black uppercase bg-gray-50">
+            <thead class="text-[13px] text-white uppercase bg-slate-700">
               <tr>
                 <th scope="col" class="px-6 py-4 rounded-s-lg">Ticket</th>
                 <th scope="col" class="px-6 py-4">Symbol</th>
@@ -515,7 +525,7 @@
         <h2 class="text-lg font-semibold mb-4">Chart Drawdown</h2>
         <div
           id="chart-drawdown-loading"
-          class="flex items-center justify-center w-full h-[300px] lg:h-[300px] xl:h-[450px] w-full hidden"
+          class="flex items-center justify-center w-full h-[300px] lg:h-[300px] xl:h-[450px] max-h-[450px] w-full hidden"
         >
           <svg
             aria-hidden="true"
@@ -574,10 +584,9 @@
         </div>
       </div>
       <div id="history-positions-content">
-        <h2 class="mt-8 text-xl">History Positions</h2>
         <div class="p-3">
           <table id="history-positions-table" class="!mx-0 !w-full">
-            <thead class="text-xs text-gray-700 bg-gray-100">
+            <thead class="text-xs text-white bg-gray-700">
               <tr>
                 <th scope="col" class="px-6 !py-4 !border-none rounded-s-lg">
                   Ticket
@@ -598,32 +607,7 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="text-sm">
-              <!-- <tr>
-                <td>January</td>
-                <td>120</td>
-              </tr>
-              <tr>
-                <td>February</td>
-                <td>150</td>
-              </tr>
-              <tr>
-                <td>March</td>
-                <td>180</td>
-              </tr>
-              <tr>
-                <td>April</td>
-                <td>220</td>
-              </tr>
-              <tr>
-                <td>May</td>
-                <td>260</td>
-              </tr>
-              <tr>
-                <td>June</td>
-                <td>300</td>
-              </tr> -->
-            </tbody>
+            <tbody class="text-xs"></tbody>
           </table>
         </div>
       </div>
@@ -679,7 +663,7 @@
             : '<i data-lucide="trending-down" class="text-red-500 w-4 h-4"></i>';
 
         return `
-                    <div class="border shadow-sm bg-white rounded-lg px-3 py-4">
+                    <div class="border shadow-sm bg-white rounded-xl px-3 py-4">
                       <div class="flex gap-1 flex-row items-center space-y-0 pb-2">
                         <i data-lucide="${iconName}" class="w-4 h-4 text-gray-500"></i>
                         <div class="text-sm font-medium">${title}</div>
@@ -1404,6 +1388,7 @@
         $("#lossPercentage").text(`${data.CountLossTradesPercentage}%`);
         $("#lossCount").text(`${data.CountLossTrades} Loss`);
         $("#totalTrades").text(data.CountTrades);
+        $("#count-all-trades").text(data.CountTrades);
         $("#profitFactor").text(data.ProfitFactor);
         $("#dayTradeAverage").text(`${data.CountDayTrade} Day Trade average`);
       };
@@ -1631,6 +1616,8 @@
           return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds}.${milliseconds}`;
         };
 
+        console.log(Positions);
+
         function calculateTotal(data, key) {
           return data.reduce((total, item) => total + (item[key] || 0), 0);
         }
@@ -1646,18 +1633,19 @@
           const profitIcon = totalProfit > 0 ? "trending-up" : "trending-down";
 
           return `
-              <tr class="bg-gray-100 text-black text-sm">
-                <td class="px-6 py-4 rounded-es-xl">${name}</td>
+              <tr class=" text-black text-xs font-medium">
+                <td class="px-4 py-3">
+                  <span class="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded">  
+                    ${name}
+                  </span>
+                </td>
                 <td colspan="7"></td>
-                <td class="px-6 py-4">$${totalNowPrice.toFixed(2)}</td>
-                <td class="px-6 py-4">${totalSwap.toFixed(2)}</td>
-                <td class="px-6 py-4 flex items-center gap-1 ${profitClass}">
+                <td class="px-6 py-3">$${totalNowPrice.toFixed(2)}</td>
+                <td class="px-6 py-3">${totalSwap.toFixed(2)}</td>
+                <td class="px-6 py-3 flex items-center gap-1 ${profitClass}">
                   ${totalProfit.toFixed(2)}
                   <i data-lucide="${profitIcon}" class="w-3.5 h-3.5"></i>
                 </td>
-                <td class="px-6 py-4 rounded-ee-xl">${totalReason.toFixed(
-                  2
-                )}</td>
               </tr>
             `;
         };
@@ -1679,14 +1667,23 @@
             const profitIcon =
               position.Profit > 0 ? "trending-up" : "trending-down";
 
+            const typeClass =
+              position.TypeString === "buy"
+                ? "bg-blue-100 text-blue-800"
+                : "bg-red-100 text-red-800";
+
             const row = `
               <tr class="odd:bg-white even:bg-gray-50 border-b last:border-none">
                 <td class="px-6 py-4">${position.Ticket}</td>
                 <td class="px-6 py-4">${position.Symbol}</td>
                 <td class="px-6 py-4">${formattedOpenTime}</td>
-                <td class="px-6 py-4">${position.TypeString}</td>
+                <td class="px-6 py-4">
+                  <span class="${typeClass} text-xs font-medium me-2 px-2.5 py-0.5 rounded">
+                    ${position.TypeString}
+                  </span>
+                </td>
                 <td class="px-6 py-4">${position.Volume}</td>
-                <td class="px-6 py-4">${position.OpenPrice.toFixed(2)}</td>
+                <td class="px-6 py-4">$${position.OpenPrice.toFixed(2)}</td>
                 <td class="px-6 py-4">${position.StopLoss}</td>
                 <td class="px-6 py-4">${position.TakeProfit}</td>
                 <td class="px-6 py-4">$${position.NowPrice}</td>
@@ -1695,7 +1692,7 @@
                   ${position.Profit}
                   <i data-lucide="${profitIcon}" class="w-3.5 h-3.5"></i>
                 </td>
-                <td class="px-6 py-4">${position.Reason}</td>
+                <td class="px-6 py-4">${position.ReasonString}</td>
               </tr>
             `;
 
@@ -1730,7 +1727,7 @@
                   ${order.Profit}
                   <i data-lucide="${profitIcon}" class="w-3.5 h-3.5"></i>
                 </td>
-                <td class="px-6 py-4">${order.Reason}</td>
+                <td class="px-6 py-4">${order.ReasonString}</td>
               </tr>
             `;
 
@@ -1872,8 +1869,6 @@
             Reason,
           ];
         });
-
-        console.log(newDataformatted);
 
         $("#history-positions-table").DataTable({
           data: newDataformatted,
