@@ -73,7 +73,7 @@
 
       .dataTables_wrapper .dataTables_paginate .paginate_button.current {
         background-color: #64748b; /* Tailwind Blue-500 */
-        color: #ffffff !important; 
+        color: #ffffff !important;
         border-color: #e2e8f0;
       }
 
@@ -617,12 +617,14 @@
     <script>
       lucide.createIcons();
 
+      // API Key
+      const APIKey =
+        "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20";
+      // End API Key
+
       // Fetching Analyze Data
       function fetchAnalyzeData(login) {
         const url = `https://socket.unfxco.com/mt5/api/analyze/basic?login=${login}`;
-        const APIKey =
-          "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20";
-
         return fetch(url, { headers: { APIKey } });
       }
       // End Fetching Analyze Data
@@ -630,18 +632,12 @@
       // Fetching Drawdown Data
       function fetchDrawdownData(login) {
         const url = `https://socket.unfxco.com/mt5/api/analyze/drawdown/chart?login=${login}`;
-        const APIKey =
-          "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20";
-
         return fetch(url, { headers: { APIKey } });
       }
       // End Fetching Drawdown Data
-
+    
       function fetchHistoryPositionsData(login) {
         const url = `https://socket.unfxco.com/mt5/api/position/public/history?login=${login}`;
-        const APIKey =
-          "6a4ce048dffdc0637965e1128a551b54983aa6e61cb28ec9df692c3184683d20";
-
         return fetch(url, { headers: { APIKey } });
       }
       // End Fetching Drawdown Data
@@ -1931,147 +1927,158 @@
         });
         // End Tabs Switching
 
-        // Fetching Analyze Data
-        const login = 799945;
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const login = urlParams.get("login");
 
-        $("#analyze-loading").removeClass("hidden");
-        $("#analyze-error").addClass("hidden");
-        $("#analyze").addClass("hidden");
+        if (login) {
+          console.log("login");
 
-        fetchAnalyzeData(login)
-          .then((res) => res.json())
-          .then((data) => {
-            $("#analyze-loading").addClass("hidden");
-            $("#analyze").removeClass("hidden");
+          $("#analyze-loading").removeClass("hidden");
+          $("#analyze-error").addClass("hidden");
+          $("#analyze").addClass("hidden");
 
-            const {
-              Summary,
-              PropAnalyze,
-              NowStatus,
-              HistoryBalance,
-              HistoryGrowth,
-              CountTrade,
-              Positions,
-              Orders,
-            } = data;
+          fetchAnalyzeData(login)
+            .then((res) => res.json())
+            .then((data) => {
+              $("#analyze-loading").addClass("hidden");
+              $("#analyze").removeClass("hidden");
 
-            const { LimitVolume, ...res } = PropAnalyze;
-            const newPropAnalyze = {
-              ...res,
-              RelativeDrawdown: NowStatus.RelativeDrawdown,
-            };
+              const {
+                Summary,
+                PropAnalyze,
+                NowStatus,
+                HistoryBalance,
+                HistoryGrowth,
+                CountTrade,
+                Positions,
+                Orders,
+              } = data;
 
-            // Display Summary
-            renderSumStats(Summary);
-            renderSumChart(Summary);
-            // End Display Summary
+              const { LimitVolume, ...res } = PropAnalyze;
+              const newPropAnalyze = {
+                ...res,
+                RelativeDrawdown: NowStatus.RelativeDrawdown,
+              };
 
-            // Display Prop Analyze
-            renderPropAnalyze(newPropAnalyze);
-            // End Display Prop Analyze
+              // Display Summary
+              renderSumStats(Summary);
+              renderSumChart(Summary);
+              // End Display Summary
 
-            // Display History Charts
-            renderHistoryCharts(HistoryBalance, HistoryGrowth);
-            // End Display History Charts
+              // Display Prop Analyze
+              renderPropAnalyze(newPropAnalyze);
+              // End Display Prop Analyze
 
-            // Display Trading Methods
-            renderTradingMethods(CountTrade);
-            renderTradimgMethodsChart(CountTrade);
-            // End Display Trading Methods
+              // Display History Charts
+              renderHistoryCharts(HistoryBalance, HistoryGrowth);
+              // End Display History Charts
 
-            // Display Now Status
-            renderNowStatus(NowStatus);
-            // End Display Now Status
+              // Display Trading Methods
+              renderTradingMethods(CountTrade);
+              renderTradimgMethodsChart(CountTrade);
+              // End Display Trading Methods
 
-            // Display Profit vs Loss
-            renderProfitVsLoss(CountTrade);
-            renderProfitVsLossChart(CountTrade);
-            // End Display Profit vs Loss
+              // Display Now Status
+              renderNowStatus(NowStatus);
+              // End Display Now Status
 
-            // Display Positions & Orders Table
-            renderPositionsOrdersTable(Positions, Orders);
-            // End Display Positions & Orders Table
-          })
-          .catch((error) => {
-            $("#analyze").addClass("hidden");
-            $("#analyze-loading").addClass("hidden");
-            $("#analyze-error").removeClass("hidden");
-            $("#analyze-error-message").text(error.message);
-          });
-        // End Fetching Analyze Data
+              // Display Profit vs Loss
+              renderProfitVsLoss(CountTrade);
+              renderProfitVsLossChart(CountTrade);
+              // End Display Profit vs Loss
 
-        // Fetching Drawdown Data
-        $("#max-drawdown-loading").removeClass("hidden");
-        $("#chart-drawdown-loading").removeClass("hidden");
-        $("#max-drawdown-content").addClass("hidden");
-        $("#analyze-error").addClass("hidden");
-
-        fetchDrawdownData(login)
-          .then((res) => res.json())
-          .then((data) => {
-            $("#max-drawdown-loading").addClass("hidden");
-            $("#chart-drawdown-loading").addClass("hidden");
-            $("#max-drawdown-content").removeClass("hidden");
-
-            const {
-              MaxAllTimeBalanceDrawdown,
-              MaxAllTimeBalanceDrawdownTime,
-              MaxDayBalanceDrawdown,
-              MaxDayBalanceDrawdownTime,
-              MaxEODBalanceDrawdown,
-              MaxEODBalanceDrawdownTime,
-              MaxFloatingDrawdown,
-              MaxFloatingDrawdownTime,
-              MaxStartBalanceDrawdown,
-              MaxStartBalanceDrawdownTime,
-              ChartDrawdown,
-              ShowChartDrawdown,
-            } = data;
-
-            // Display Max Drawdown
-            renderMaxDrawdown({
-              ...ShowChartDrawdown,
-              MaxAllTimeBalanceDrawdown,
-              MaxAllTimeBalanceDrawdownTime,
-              MaxDayBalanceDrawdown,
-              MaxDayBalanceDrawdownTime,
-              MaxEODBalanceDrawdown,
-              MaxEODBalanceDrawdownTime,
-              MaxFloatingDrawdown,
-              MaxFloatingDrawdownTime,
-              MaxStartBalanceDrawdown,
-              MaxStartBalanceDrawdownTime,
+              // Display Positions & Orders Table
+              renderPositionsOrdersTable(Positions, Orders);
+              // End Display Positions & Orders Table
+            })
+            .catch((error) => {
+              $("#analyze").addClass("hidden");
+              $("#analyze-loading").addClass("hidden");
+              $("#analyze-error").removeClass("hidden");
+              $("#analyze-error-message").text(error.message);
             });
-            // End Display Max Drawdown
+          // End Fetching Analyze Data
 
-            // Display Chart Drawdown
-            renderChartDrawdown(ChartDrawdown);
-            // End Display Chart Drawdown
-          })
-          .catch((error) => {
-            $("#analyze").addClass("hidden");
-            $("#analyze-error").removeClass("hidden");
-            $("#analyze-error-message").text(error.message);
-          });
-        // End Fetching Drawdown Data
+          // Fetching Drawdown Data
+          $("#max-drawdown-loading").removeClass("hidden");
+          $("#chart-drawdown-loading").removeClass("hidden");
+          $("#max-drawdown-content").addClass("hidden");
+          $("#analyze-error").addClass("hidden");
 
-        // Fetching History Positions
-        $("#history-positions-content").addClass("hidden");
-        $("#history-positions-loading").removeClass("hidden");
-        fetchHistoryPositionsData(login)
-          .then((res) => res.json())
-          .then((data) => {
-            $("#history-positions-loading").addClass("hidden");
-            $("#history-positions-content").removeClass("hidden");
+          fetchDrawdownData(login)
+            .then((res) => res.json())
+            .then((data) => {
+              $("#max-drawdown-loading").addClass("hidden");
+              $("#chart-drawdown-loading").addClass("hidden");
+              $("#max-drawdown-content").removeClass("hidden");
 
-            renderHistoryPositionsTable(data);
-          })
-          .catch((error) => {
-            $("#history-positions-content").addClass("hidden");
-            $("#analyze-error").removeClass("hidden");
-            $("#analyze-error-message").text(error.message);
-          });
-        // End Fetching History Positions
+              const {
+                MaxAllTimeBalanceDrawdown,
+                MaxAllTimeBalanceDrawdownTime,
+                MaxDayBalanceDrawdown,
+                MaxDayBalanceDrawdownTime,
+                MaxEODBalanceDrawdown,
+                MaxEODBalanceDrawdownTime,
+                MaxFloatingDrawdown,
+                MaxFloatingDrawdownTime,
+                MaxStartBalanceDrawdown,
+                MaxStartBalanceDrawdownTime,
+                ChartDrawdown,
+                ShowChartDrawdown,
+              } = data;
+
+              // Display Max Drawdown
+              renderMaxDrawdown({
+                ...ShowChartDrawdown,
+                MaxAllTimeBalanceDrawdown,
+                MaxAllTimeBalanceDrawdownTime,
+                MaxDayBalanceDrawdown,
+                MaxDayBalanceDrawdownTime,
+                MaxEODBalanceDrawdown,
+                MaxEODBalanceDrawdownTime,
+                MaxFloatingDrawdown,
+                MaxFloatingDrawdownTime,
+                MaxStartBalanceDrawdown,
+                MaxStartBalanceDrawdownTime,
+              });
+              // End Display Max Drawdown
+
+              // Display Chart Drawdown
+              renderChartDrawdown(ChartDrawdown);
+              // End Display Chart Drawdown
+            })
+            .catch((error) => {
+              $("#analyze").addClass("hidden");
+              $("#analyze-error").removeClass("hidden");
+              $("#analyze-error-message").text(error.message);
+            });
+          // End Fetching Drawdown Data
+
+          // Fetching History Positions
+          $("#history-positions-content").addClass("hidden");
+          $("#history-positions-loading").removeClass("hidden");
+          fetchHistoryPositionsData(login)
+            .then((res) => res.json())
+            .then((data) => {
+              $("#history-positions-loading").addClass("hidden");
+              $("#history-positions-content").removeClass("hidden");
+
+              renderHistoryPositionsTable(data);
+            })
+            .catch((error) => {
+              $("#history-positions-content").addClass("hidden");
+              $("#analyze-error").removeClass("hidden");
+              $("#analyze-error-message").text(error.message);
+            });
+          // End Fetching History Positions
+        } else {
+          $("#analyze-loading").addClass("hidden");
+          $("#analyze-error").removeClass("hidden");
+          $("#analyze-error-message").text("Parameter Invalid.");
+        }
+
+        // const login = 799945;
       });
     </script>
   </body>
